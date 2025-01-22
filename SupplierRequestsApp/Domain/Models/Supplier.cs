@@ -6,14 +6,15 @@ public class Supplier
     private string _name;
     private string _address;
     private string _phone;
+    private List<Product.Product> _products;
 
-
-    public Supplier(Guid id, string name, string address, string phone)
+    public Supplier(Guid id, string name, string address, string phone, List<Product.Product> products)
     {
         _id = id;
         _name = name;
         _address = address;
         _phone = phone;
+        _products = products;
     }
 
     public Guid Id
@@ -38,5 +39,11 @@ public class Supplier
     {
         get => _phone;
         set => _phone = value;
+    }
+
+    public List<Product.Product> Products
+    {
+        get => _products;
+        set => _products = value;
     }
 }

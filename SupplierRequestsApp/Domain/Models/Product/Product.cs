@@ -1,9 +1,19 @@
-﻿namespace SupplierRequestsApp.Domain.Models;
+﻿namespace SupplierRequestsApp.Domain.Models.Product;
 
 public class Product
 {
     private Guid _id;
     private string _name;
+    private List<Guid> _suppliersId;
+    private Guid _storageId;
+
+    public Product(Guid id, string name, List<Guid> suppliersId, Guid storageId)
+    {
+        _id = id;
+        _name = name;
+        _suppliersId = suppliersId;
+        _storageId = storageId;
+    }
 
     public Guid Id
     {
@@ -17,9 +27,15 @@ public class Product
         set => _name = value;
     }
 
-    public Product(Guid id, string name)
+    public List<Guid> SuppliersId
     {
-        _id = id;
-        _name = name;
+        get => _suppliersId;
+        set => _suppliersId = value;
+    }
+
+    public Guid StorageId
+    {
+        get => _storageId;
+        set => _storageId = value;
     }
 }

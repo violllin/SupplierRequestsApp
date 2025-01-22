@@ -1,20 +1,24 @@
-﻿namespace SupplierRequestsApp.Domain.Models;
+﻿using SupplierRequestsApp.Domain.Models.Product;
+
+namespace SupplierRequestsApp.Domain.Models;
 
 public class Order
 {
     private Guid _id;
+    private DateTime _dateCreated;
     private Guid _supplierId;
-    private List<OrderProduct> _orderProducts;
-    private OrderStatus _orderStatus;
+    private List<OrderItem> _orderProducts;
+    private DeliveryStatus _deliveryStatus;
     private OrderPayStatus _orderPayStatus;
 
-    public Order(Guid id, Guid supplierId, List<OrderProduct> orderProducts, OrderStatus orderStatus, OrderPayStatus orderPayStatus)
+    public Order(Guid id, DateTime dateCreated, Guid supplierId, List<OrderItem> orderProducts, DeliveryStatus deliveryStatus, OrderPayStatus orderPayStatus)
     {
-        _id = id;
-        _supplierId = supplierId;
-        _orderProducts = orderProducts;
-        _orderStatus = orderStatus;
-        _orderPayStatus = orderPayStatus;
+        Id = id;
+        DateCreated = dateCreated;
+        SupplierId = supplierId;
+        OrderProducts = orderProducts;
+        Status = deliveryStatus;
+        PayStatus = orderPayStatus;
     }
 
     public Guid Id
@@ -29,16 +33,16 @@ public class Order
         set => _supplierId = value;
     }
 
-    public List<OrderProduct> OrderProducts
+    public List<OrderItem> OrderProducts
     {
         get => _orderProducts;
         set => _orderProducts = value;
     }
 
-    public OrderStatus Status
+    public DeliveryStatus Status
     {
-        get => _orderStatus;
-        set => _orderStatus = value;
+        get => _deliveryStatus;
+        set => _deliveryStatus = value;
     }
 
     public OrderPayStatus PayStatus
@@ -46,9 +50,15 @@ public class Order
         get => _orderPayStatus;
         set => _orderPayStatus = value;
     }
+
+    public DateTime DateCreated
+    {
+        get => _dateCreated;
+        set => _dateCreated = value;
+    }
 }
 
-public enum OrderStatus
+public enum DeliveryStatus
 {
     SENT,
     RECEIVED,
