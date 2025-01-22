@@ -1,4 +1,6 @@
-﻿namespace SupplierRequestsApp.Domain.Models;
+﻿using SupplierRequestsApp.Data;
+
+namespace SupplierRequestsApp.Domain.Models;
 
 public class Storage
 {
@@ -14,7 +16,7 @@ public class Storage
     public Guid StorageId
     {
         get => _storageId;
-        set => _storageId = value;
+        set => _storageId = Validator.RequireGuid(value);
     }
 
     public Dictionary<int, int> Products

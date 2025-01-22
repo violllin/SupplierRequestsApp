@@ -1,4 +1,6 @@
-﻿namespace SupplierRequestsApp.Domain.Models;
+﻿using SupplierRequestsApp.Data;
+
+namespace SupplierRequestsApp.Domain.Models;
 
 public class Supplier
 {
@@ -20,25 +22,25 @@ public class Supplier
     public Guid Id
     {
         get => _id;
-        set => _id = value;
+        set => _id = Validator.RequireGuid(value);
     }
 
     public string Name
     {
         get => _name;
-        set => _name = value;
+        set => _name = Validator.RequireNotBlank(value);
     }
 
     public string Address
     {
         get => _address;
-        set => _address = value;
+        set => _address = Validator.RequireNotBlank(value);
     }
 
     public string Phone
     {
         get => _phone;
-        set => _phone = value;
+        set => _phone = Validator.RequireNotBlank(value);
     }
 
     public List<Product.Product> Products

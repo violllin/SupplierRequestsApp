@@ -1,4 +1,5 @@
-﻿using SupplierRequestsApp.Domain.Models.Product;
+﻿using SupplierRequestsApp.Data;
+using SupplierRequestsApp.Domain.Models.Product;
 
 namespace SupplierRequestsApp.Domain.Models;
 
@@ -24,13 +25,13 @@ public class Order
     public Guid Id
     {
         get => _id;
-        set => _id = value;
+        set => _id = Validator.RequireGuid(value);
     }
 
     public Guid SupplierId
     {
         get => _supplierId;
-        set => _supplierId = value;
+        set => _supplierId = Validator.RequireGuid(value);
     }
 
     public List<OrderItem> OrderProducts
