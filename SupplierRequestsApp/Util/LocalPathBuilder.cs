@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using Microsoft.Extensions.Primitives;
 using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Domain.Models.Product;
-using Exception = ABI.System.Exception;
 
 namespace SupplierRequestsApp.Util;
 
