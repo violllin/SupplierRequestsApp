@@ -11,37 +11,41 @@ public class LocalStorageService<T> : IStorage<T> where T : class
     public IEnumerable<T> LoadEntities(Type type)
     {
         List<T> entities = [];
-        var dir = LocalPathBuilder.BuildFolderPath(type);
-        if (!Directory.Exists(dir)) return entities;
-        var files = Directory.GetFiles(dir, "*.json");
+        var localPathDirectory = LocalPathBuilder.BuildFolderPath(type);
+        if (!Directory.Exists(localPathDirectory.Directory)) return entities;
+        var files = Directory.GetFiles(localPathDirectory.Directory, "*.json");
         entities.AddRange(files.Select(File.ReadAllText).Select(jsonString => _serializer.Deserialize<T>(jsonString)).OfType<T>());
         return entities;
     }
 
     public T? LoadEntity(Type type, string fileName)
     {
-        var filePath = LocalPathBuilder.BuildPath(type, fileName);
-        if (!File.Exists(filePath)) throw new FileNotFoundException($"{filePath} not found");
-        var jsonString = File.ReadAllText(filePath);
+        var localPath = LocalPathBuilder.BuildPath(type, fileName);
+        if (!File.Exists(localPath.AbsolutePath)) throw new FileNotFoundException($"{localPath} not found");
+        var jsonString = File.ReadAllText(localPath.AbsolutePath);
         return _serializer.Deserialize<T>(jsonString);
     }
 
     public void SaveEntity(T entity)
     {
-        var path = LocalPathBuilder.BuildPath(entity);
+        var localPath = LocalPathBuilder.BuildPath(entity);
         try
         {
+            Debug.WriteLine(localPath.Directory);
+            if (!Directory.Exists(localPath.Directory))
+            {
+                Directory.CreateDirectory(localPath.Directory);
+            }
             var jsonString = _serializer.Serialize(entity);
-            File.WriteAllText(path, jsonString);
-            Debug.WriteLine($"Entity {entity} saved successfully.");
+            File.WriteAllText(localPath.AbsolutePath, jsonString);
         }
         catch (Exception e)
         {
-            Debug.WriteLine($"Cannot drop entity {entity}. Error in: {e}");
+            Debug.WriteLine($"Cannot save entity {entity}. Error in: {e}");
         }
         finally
         {
-            if (File.Exists(path))
+            if (File.Exists(localPath.AbsolutePath))
             {
                 Debug.WriteLine($"Entity {entity} saved successfully.");
             }
@@ -53,10 +57,10 @@ public class LocalStorageService<T> : IStorage<T> where T : class
         var path = LocalPathBuilder.BuildPath(updatedEntity);
         try
         {
-            if (File.Exists(path))
+            if (File.Exists(path.AbsolutePath))
             {
                 var jsonString = _serializer.Serialize(updatedEntity);
-                File.WriteAllText(path, jsonString);
+                File.WriteAllText(path.AbsolutePath, jsonString);
                 Debug.WriteLine($"Entity {updatedEntity} updated successfully.");
             }
             else
@@ -75,7 +79,7 @@ public class LocalStorageService<T> : IStorage<T> where T : class
         var path = LocalPathBuilder.BuildPath(entity);
         try
         {
-            File.Delete(path);
+            File.Delete(path.AbsolutePath);
         }
         catch (Exception e)
         {
@@ -83,7 +87,7 @@ public class LocalStorageService<T> : IStorage<T> where T : class
         }
         finally
         {
-            if (!File.Exists(path))
+            if (!File.Exists(path.AbsolutePath))
             {
                 Debug.WriteLine($"Entity {entity} dropped successfully.");
             }

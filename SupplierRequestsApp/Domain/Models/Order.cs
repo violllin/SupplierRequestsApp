@@ -12,14 +12,14 @@ public class Order
     private DeliveryStatus _deliveryStatus;
     private OrderPayStatus _orderPayStatus;
 
-    public Order(Guid id, DateTime dateCreated, Guid supplierId, List<OrderItem> orderProducts, DeliveryStatus deliveryStatus, OrderPayStatus orderPayStatus)
+    public Order(Guid id, DateTime dateCreated, Guid supplierId, List<OrderItem> orderProducts, DeliveryStatus deliveryStatus, OrderPayStatus payStatus)
     {
         Id = id;
         DateCreated = dateCreated;
         SupplierId = supplierId;
         OrderProducts = orderProducts;
-        Status = deliveryStatus;
-        PayStatus = orderPayStatus;
+        DeliveryStatus = deliveryStatus;
+        PayStatus = payStatus;
     }
 
     public Guid Id
@@ -40,7 +40,7 @@ public class Order
         set => _orderProducts = value;
     }
 
-    public DeliveryStatus Status
+    public DeliveryStatus DeliveryStatus
     {
         get => _deliveryStatus;
         set => _deliveryStatus = value;

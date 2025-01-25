@@ -1,9 +1,9 @@
 ﻿namespace SupplierRequestsApp.Util;
 
-public class Config
+public static class Config
 {
-    public const string StoragesStoragePath = "storages/";
-    public const string SuppliersStoragePath = "suppliers/";
-    public const string OrdersStoragePath = "orders/";
-    public const string ProductsStoragePath = "products/";
+    public const string StoragesStoragePath = "Storages/";
+    public const string SuppliersStoragePath = "Suppliers/";
+    public const string OrdersStoragePath = "Orders/";
+    public const string ProductsStoragePath = "Products/";
 }
