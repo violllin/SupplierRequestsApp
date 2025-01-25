@@ -8,89 +8,86 @@ public class LocalStorageService<T> : IStorage<T> where T : class
 {
     private readonly JsonObjectSerializer _serializer = new();
 
-    public IEnumerable<T> LoadEntities(string dir)
+    public IEnumerable<T> LoadEntities(Type type)
     {
-        List<T> entities = new List<T>();
-
-        if (Directory.Exists(dir))
-        {
-            var files = Directory.GetFiles(dir, "*.json");
-            foreach (var file in files)
-            {
-                var jsonString = File.ReadAllText(file);
-                var entity = _serializer.Deserialize<T>(jsonString);
-                if (entity != null)
-                {
-                    entities.Add(entity);
-                }
-            }
-        }
-
+        List<T> entities = [];
+        var dir = LocalPathBuilder.BuildFolderPath(type);
+        if (!Directory.Exists(dir)) return entities;
+        var files = Directory.GetFiles(dir, "*.json");
+        entities.AddRange(files.Select(File.ReadAllText).Select(jsonString => _serializer.Deserialize<T>(jsonString)).OfType<T>());
         return entities;
     }
 
-    public T? LoadEntity(string dir)
+    public T? LoadEntity(Type type, string fileName)
     {
-        string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string filePath = Path.Combine(directoryPath, $"{dir}.json");
-
-        if (File.Exists(filePath))
-        {
-            var jsonString = File.ReadAllText(filePath);
-            return _serializer.Deserialize<T>(jsonString);
-        }
-
-        return null;
+        var filePath = LocalPathBuilder.BuildPath(type, fileName);
+        if (!File.Exists(filePath)) throw new FileNotFoundException($"{filePath} not found");
+        var jsonString = File.ReadAllText(filePath);
+        return _serializer.Deserialize<T>(jsonString);
     }
 
-    public void SaveEntity(string dir, T entity)
+    public void SaveEntity(T entity)
     {
+        var path = LocalPathBuilder.BuildPath(entity);
         try
         {
-            string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            Debug.WriteLine("SaveEntity > Directory path: " + directoryPath);
-            string fullPath = Path.Combine(directoryPath, dir);
-            string? directory = Path.GetDirectoryName(fullPath);
-
-            if (!Directory.Exists(directory))
-            {
-                if (directory != null)
-                {
-                    Debug.WriteLine("SaveEntity > Creating directory: " + directory);
-                    Directory.CreateDirectory(directory);
-                }
-                else
-                {
-                    Debug.WriteLine("SaveEntity > Directory is not exist and directory name is null.");
-                }
-            }
-
-            string filePath = $"{fullPath}.json";
             var jsonString = _serializer.Serialize(entity);
-            File.WriteAllText(filePath, jsonString);
+            File.WriteAllText(path, jsonString);
             Debug.WriteLine($"Entity {entity} saved successfully.");
         }
         catch (Exception e)
         {
-            Debug.WriteLine($"(LocalStorageService) Can't save entity. Reason: {e}");
-            throw;
+            Debug.WriteLine($"Cannot drop entity {entity}. Error in: {e}");
+        }
+        finally
+        {
+            if (File.Exists(path))
+            {
+                Debug.WriteLine($"Entity {entity} saved successfully.");
+            }
         }
     }
 
-    public void UpdateEntity(string dir, T updatedEntity)
+    public void UpdateEntity(T updatedEntity)
     {
-        string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string filePath = Path.Combine(directoryPath, $"{dir}.json");
-
-        if (File.Exists(filePath))
+        var path = LocalPathBuilder.BuildPath(updatedEntity);
+        try
         {
-            var jsonString = _serializer.Serialize(updatedEntity);
-            File.WriteAllText(filePath, jsonString);
-            Debug.WriteLine($"Entity {updatedEntity} updated successfully.");
+            if (File.Exists(path))
+            {
+                var jsonString = _serializer.Serialize(updatedEntity);
+                File.WriteAllText(path, jsonString);
+                Debug.WriteLine($"Entity {updatedEntity} updated successfully.");
+            }
+            else
+            {
+                SaveEntity(updatedEntity);
+            }
         }
-        else
+        catch (Exception e)
         {
-            SaveEntity(dir, updatedEntity);
+            Debug.WriteLine($"Cannot update entity {updatedEntity}. Error in: {e}");
         }
     }
+
+    public void DropEntity(T entity)
+    {
+        var path = LocalPathBuilder.BuildPath(entity);
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Cannot drop entity {entity}. Error in: {e}");
+        }
+        finally
+        {
+            if (!File.Exists(path))
+            {
+                Debug.WriteLine($"Entity {entity} dropped successfully.");
+            }
+        }
+    }
+
 }
