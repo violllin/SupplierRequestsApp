@@ -12,7 +12,8 @@ public class LocalStorageService<T> : IStorage<T> where T : class
     {
         List<T> entities = [];
         var localPathDirectory = LocalPathBuilder.BuildFolderPath(type);
-        if (!Directory.Exists(localPathDirectory.Directory)) return entities;
+        if (!Directory.Exists(localPathDirectory.Directory))
+            throw new DirectoryNotFoundException($"No directory found with path: {localPathDirectory.Directory}");
         var files = Directory.GetFiles(localPathDirectory.Directory, "*.json");
         entities.AddRange(files.Select(File.ReadAllText).Select(jsonString => _serializer.Deserialize<T>(jsonString)).OfType<T>());
         return entities;
@@ -31,7 +32,6 @@ public class LocalStorageService<T> : IStorage<T> where T : class
         var localPath = LocalPathBuilder.BuildPath(entity);
         try
         {
-            Debug.WriteLine(localPath.Directory);
             if (!Directory.Exists(localPath.Directory))
             {
                 Directory.CreateDirectory(localPath.Directory);
@@ -93,5 +93,4 @@ public class LocalStorageService<T> : IStorage<T> where T : class
             }
         }
     }
-
 }
