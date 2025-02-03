@@ -5,9 +5,9 @@ namespace SupplierRequestsApp.Domain.Models;
 public class Storage
 {
     private Guid _storageId;
-    private Dictionary<int, int> _products;
+    private Dictionary<Guid, int> _products;
 
-    public Storage(Guid storageId, Dictionary<int, int> products)
+    public Storage(Guid storageId, Dictionary<Guid, int> products)
     {
         _storageId = storageId;
         _products = products;
@@ -19,7 +19,7 @@ public class Storage
         set => _storageId = Validator.RequireGuid(value);
     }
 
-    public Dictionary<int, int> Products
+    public Dictionary<Guid, int> Products
     {
         get => _products;
         set => _products = value;

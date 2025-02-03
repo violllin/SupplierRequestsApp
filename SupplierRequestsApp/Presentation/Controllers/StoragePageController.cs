@@ -32,6 +32,20 @@ public class StoragePageController
         {
             Storages.Add(itemStorage);
         }
-        Debug.WriteLine(Storages.Count);
     }
+
+    public void AddItem(Storage storage)
+    {
+        Service.AddItem(storage);
+        Storages.Add(storage);
+        Service.UpdateTable();
+    }
+
+    public void DropItem(Storage itemToDrop)
+    {
+        Service.DropItem(itemToDrop);
+        Storages.Remove(itemToDrop);
+        Service.UpdateTable();
+    }
+    
 }

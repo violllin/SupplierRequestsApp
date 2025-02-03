@@ -7,7 +7,7 @@
         Padding="20"
         MaximumWidthRequest="750">
         <Button Text="Склады"
-                Clicked="OnGoToStoragePageClicked" 
+                Clicked="OnStoragesPageClicked" 
                 VerticalOptions="Center"/>
     </StackLayout>
 

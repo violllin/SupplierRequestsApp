@@ -1,16 +1,25 @@
-﻿namespace SupplierRequestsApp.Presentation.Pages;
+﻿using System.Diagnostics;
+using SupplierRequestsApp.Presentation.Pages.Storage;
+
+namespace SupplierRequestsApp.Presentation.Pages;
 
 public partial class MainPage : ContentPage
 {
-    int count = 0;
-
     public MainPage()
     {
         InitializeComponent();
     }
 
-    private async void OnGoToStoragePageClicked(object sender, EventArgs e)
+    private async void OnStoragesPageClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new StoragesPage());
+        try
+        {
+            await Navigation.PushAsync(new StoragesPage());
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Can't open storages page. Caused by: {exception.Message}");
+            await DisplayAlert("Ошибка!", "Произошла ошибка при попытке открыть страницу.", "ОК");
+        }
     }
 }
