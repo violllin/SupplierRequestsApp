@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Presentation.Controllers;
 
@@ -19,11 +20,12 @@ public partial class StoragesPage : ContentPage
         try
         {
             _controller.Service.AddItem(newStorage);
-            await DisplayAlert("Storage Added", "New storage has been added.", "OK");
+            await DisplayAlert("Успешно!", "Склад добавлен", "OK");
         }
         catch (Exception exception)
         {
-            await DisplayAlert("Storage Not Added", exception.Message, "Pizdec");
+            await DisplayAlert("Ошибка!", "Не удалось добавить склад", "ОК");
+            Debug.WriteLine($"Error while add storage. Caused by: {exception}");
         }
         finally
         {
@@ -33,28 +35,29 @@ public partial class StoragesPage : ContentPage
     
     private async void OnEditClicked(object sender, EventArgs e)
     {
-        var button = (Button)sender;
-        var storage = (Storage?) button.CommandParameter;
-        await DisplayAlert("Edit Storage", $"Edit storage with ID: {storage.StorageId}", "OK");
+        // var button = (Button)sender;
+        // var storage = (Storage?) button.CommandParameter;
+        // await DisplayAlert("Edit Storage", $"Edit storage with ID: {storage.StorageId}", "OK");
     }
 
     private async void OnRemoveClicked(object sender, EventArgs e)
     {
         var button = (Button)sender;
         var storage = (Storage?) button.CommandParameter;
-        bool isConfirmed = await DisplayAlert("Confirm Deletion", 
-            $"Are you sure you want to delete storage with ID: {storage.StorageId}?", 
-            "Yes", "No");
+        bool isConfirmed = await DisplayAlert("Подтвердить удаление", 
+            $"Вы уверены что хотите удалить склад с ID: {storage.StorageId}?", 
+            "Да", "Нет");
 
         if (!isConfirmed) return;
         try
         {
             _controller.Service.DropItem(storage);
-            await DisplayAlert("Success!", "Storage removed.", "OK");
+            await DisplayAlert("Успешно!", "Склад удален.", "OK");
         }
         catch (Exception exception)
         {
-            await DisplayAlert("Fail!", exception.Message, "OK");
+            await DisplayAlert("Ошибка!", "Не удалось удалить склад.", "OK");
+            Debug.WriteLine($"Error while drop storage. Caused by: {e}");
         }
         finally
         {
