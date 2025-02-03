@@ -1,10 +1,10 @@
-﻿using SupplierRequestsApp.Domain.Service;
+﻿using System.Diagnostics;
+using SupplierRequestsApp.Domain.Service;
 
 namespace SupplierRequestsApp.Data.Service;
 
 public class TableService<T> : ITableService<T> where T: class
 {
-    private List<T> _data = [];
     private readonly IStorage<T> _storageService = new LocalStorageService<T>();
 
     public TableService()
@@ -12,11 +12,19 @@ public class TableService<T> : ITableService<T> where T: class
         UpdateTable();
     }
 
-    public List<T> Data => _data;
+    public List<T> Data { get; private set; }
 
     public void UpdateTable()
     {
-        _data = _storageService.LoadEntities(typeof(T)).ToList();
+        try
+        {
+            Data = _storageService.LoadEntities(typeof(T)).ToList();
+        }
+        catch (DirectoryNotFoundException directoryNotFoundException)
+        {
+            Debug.WriteLine($"Loaded empty {typeof(T)} table. {directoryNotFoundException.Message}");
+            Data = [];
+        }
     }
 
     public void DropItem(object item)

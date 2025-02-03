@@ -64,7 +64,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Presentation\Pages\" />
+      <MauiXaml Update="Presentation\Pages\MainPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Presentation\Pages\MainPage.xaml.cs">
+        <DependentUpon>MainPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 </Project>
