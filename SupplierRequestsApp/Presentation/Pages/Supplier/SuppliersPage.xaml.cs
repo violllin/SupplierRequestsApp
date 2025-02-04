@@ -18,7 +18,7 @@ public partial class SuppliersPage : ContentPage
     {
         try
         {
-            _controller.AddItem(new Domain.Models.Supplier(Guid.NewGuid(), "Новый поставщик", "Адрес", "Телефон", new List<Product>()));
+            _controller.AddItem(new Domain.Models.Supplier(Guid.NewGuid(), "Новый поставщик", "Адрес", "Телефон", new List<Domain.Models.Product.Product>()));
         }
         catch (Exception ex)
         {

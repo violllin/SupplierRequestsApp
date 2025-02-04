@@ -16,6 +16,9 @@
         <Button Text="Поставщики"
                 Clicked="OnSupplierPageClicked" 
                 VerticalOptions="Center"/>
+        <Button Text="Продукты"
+                Clicked="OnProductPageClicked" 
+                VerticalOptions="Center"/>
     </StackLayout>
 
 </ContentPage>

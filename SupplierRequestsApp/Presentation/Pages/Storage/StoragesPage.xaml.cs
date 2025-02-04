@@ -21,7 +21,7 @@ public partial class StoragesPage : ContentPage
         try
         {
             // todo add product selection dialog
-            var products = await DisplayProductSelectionDialog([new Product(Guid.NewGuid(), "Test product", new List<Guid>{Guid.NewGuid()}, Guid.NewGuid() )]);
+            var products = await DisplayProductSelectionDialog([new Domain.Models.Product.Product(Guid.NewGuid(), "Test product", new List<Guid>{Guid.NewGuid()}, Guid.NewGuid() )]);
             _controller.AddItem(new Domain.Models.Storage(Guid.NewGuid(), products));
         }
         catch (Exception ex)
@@ -70,10 +70,10 @@ public partial class StoragesPage : ContentPage
         }
     }
     
-    private async Task<Dictionary<Guid, int>> DisplayProductSelectionDialog(ObservableCollection<Product> allProducts)
+    private async Task<Dictionary<Guid, int>> DisplayProductSelectionDialog(ObservableCollection<Domain.Models.Product.Product> allProducts)
     {
         var selectedProducts = new Dictionary<Guid, int>();
-        var productSelections = new Dictionary<Product, bool>();
+        var productSelections = new Dictionary<Domain.Models.Product.Product, bool>();
 
         foreach (var product in allProducts)
             productSelections[product] = false;
