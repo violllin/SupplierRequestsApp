@@ -5,9 +5,13 @@
              Title="Главная">
     <StackLayout
         Padding="20"
+        Spacing="20"
         MaximumWidthRequest="750">
         <Button Text="Склады"
                 Clicked="OnStoragesPageClicked" 
+                VerticalOptions="Center"/>
+        <Button Text="Заказы"
+                Clicked="OnOrdersPageClicked" 
                 VerticalOptions="Center"/>
     </StackLayout>
 

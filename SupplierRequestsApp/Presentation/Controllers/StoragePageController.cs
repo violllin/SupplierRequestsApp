@@ -18,7 +18,7 @@ public class StoragePageController
         }
         catch (Exception e)
         {
-            Debug.WriteLine(e);
+            Debug.WriteLine($"Error while updating table. Caused by: {e.Message}");
         }
     }
 
