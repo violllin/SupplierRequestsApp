@@ -47,7 +47,7 @@ public partial class OrdersPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Ошибка при удалении заказа. Причина: {exception.Message}");
+            Debug.WriteLine($"Error while drop order. Caused by: {exception.Message}");
             await DisplayAlert("Ошибка!", "Не удалось удалить заказ.", "ОК");
         }
     }
