@@ -21,8 +21,8 @@ public partial class StoragesPage : ContentPage
         try
         {
             // todo add product selection dialog
-            var products = await DisplayProductSelectionDialog([new Domain.Models.Product.Product(Guid.NewGuid(), "Test product", new List<Guid>{Guid.NewGuid()}, Guid.NewGuid() )]);
-            _controller.AddItem(new Domain.Models.Storage(Guid.NewGuid(), products));
+            // var products = await DisplayProductSelectionDialog([new Domain.Models.Product.Product(Guid.NewGuid(), "Test product", new List<Guid>{Guid.NewGuid()}, Guid.NewGuid() )]);
+            _controller.AddItem(new Domain.Models.Storage(Guid.NewGuid(), []));
         }
         catch (Exception ex)
         {
