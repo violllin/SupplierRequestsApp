@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Storage.EditStoragePage">
+  <ContentPage.Content>
+    <VerticalStackLayout Padding="20" Spacing="15">
+      <Label Text="ID склада" FontAttributes="Bold"/>
+      <Entry x:Name="StorageIdEntry" Placeholder="ID" IsEnabled="False"/>
+
+      <Label Text="Выберите продукт" FontAttributes="Bold"/>
+      <Picker x:Name="ProductPicker"/>
+      <Label Text="Количество" FontAttributes="Bold"/>
+      <Entry x:Name="QuantityEntry" Placeholder="Введите количество" Keyboard="Numeric"/>
+      <Button x:Name="AddProductButton" Text="Добавить продукт" Clicked="OnAddProductClicked"/>
+
+      <Label Text="Выбранные продукты:" FontAttributes="Bold"/>
+      <CollectionView x:Name="SelectedProductsCollectionView">
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Grid Padding="5">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Label Text="{Binding ProductName}" VerticalOptions="Center"/>
+              <Label Grid.Column="1" Text="{Binding Quantity}" Margin="10,0" VerticalOptions="Center"/>
+              <StackLayout Orientation="Horizontal" Grid.Column="2">
+                <Button Text="Редактировать"
+                        BackgroundColor="LightGray"
+                        TextColor="Black"
+                        Clicked="OnEditProductClicked"
+                        CommandParameter="{Binding}" />
+                <Button Text="Х"
+                        BackgroundColor="DarkRed"
+                        TextColor="White"
+                        WidthRequest="30"
+                        HeightRequest="30"
+                        Clicked="OnRemoveProductClicked"
+                        CommandParameter="{Binding}" />
+              </StackLayout>
+            </Grid>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+
+      <Button Text="Сохранить" Clicked="OnSaveClicked" />
+    </VerticalStackLayout>
+  </ContentPage.Content>
+</ContentPage>
