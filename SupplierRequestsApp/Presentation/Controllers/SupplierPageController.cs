@@ -41,10 +41,17 @@ public class SuppliersPageController
         Service.UpdateTable();
     }
 
-    public void DropItem(Supplier supplierToDrop)
+    public void DropItem(Supplier supplier)
     {
-        Service.DropItem(supplierToDrop);
-        Suppliers.Remove(supplierToDrop);
+        Service.DropItem(supplier);
+        Suppliers.Remove(supplier);
+        Service.UpdateTable();
+    }
+
+    public void EditItem(Supplier supplier)
+    {
+        Service.EditItem(supplier);
+        Suppliers[Suppliers.IndexOf(supplier)] = supplier;
         Service.UpdateTable();
     }
 }
