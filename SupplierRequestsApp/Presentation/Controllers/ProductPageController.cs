@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using SupplierRequestsApp.Data.Service;
-using SupplierRequestsApp.Domain.Models.Product;
+using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Domain.Service;
 
 namespace SupplierRequestsApp.Presentation.Controllers;

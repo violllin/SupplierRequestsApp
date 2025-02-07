@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="80" />
                 </Grid.ColumnDefinitions>
                 <Label Text="ID склада" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0" />
-                <Label Text="Количество продуктов" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="1" />
+                <Label Text="Количество полок" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="1" />
                 <Label Text="" Grid.Column="2" />
                 <Label Text="Действия" FontAttributes="Bold" HorizontalTextAlignment="End" VerticalOptions="Center"
                        Grid.Column="3" />
@@ -40,7 +40,7 @@
                                     <ColumnDefinition Width="80" />
                                 </Grid.ColumnDefinitions>
                                 <Label Text="{Binding StorageId}" Grid.Column="0" VerticalOptions="Center" />
-                                <Label Text="{Binding Products.Count}" Grid.Column="1" VerticalOptions="Center" />
+                                <Label Text="{Binding Shelves.Count}" Grid.Column="1" VerticalOptions="Center" />
                                 <Label Text="" Grid.Column="2" />
                                 <Button Text="Изменить" Grid.Column="3" HorizontalOptions="End"
                                         VerticalOptions="Center" Clicked="OnEditClicked" CommandParameter="{Binding}" />

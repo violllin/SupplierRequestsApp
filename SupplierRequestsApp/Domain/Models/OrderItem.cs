@@ -1,7 +1,4 @@
 ﻿using SupplierRequestsApp.Data;
-
-namespace SupplierRequestsApp.Domain.Models.Product;
-
 public class OrderItem
 {
     private Guid _orderId;

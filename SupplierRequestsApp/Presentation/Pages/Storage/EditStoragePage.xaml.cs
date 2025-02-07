@@ -1,20 +1,25 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using SupplierRequestsApp.Data.Service;
 using SupplierRequestsApp.Domain.Models;
-using SupplierRequestsApp.Domain.Service;
 using SupplierRequestsApp.Presentation.Controllers;
+using Microsoft.Maui.Controls;
+using SupplierRequestsApp.Util;
 
 namespace SupplierRequestsApp.Presentation.Pages.Storage;
+
+public class ShelfDisplay
+{
+    public int Index { get; set; }
+    public Shelf Shelf { get; set; }
+}
 
 public partial class EditStoragePage : ContentPage
 {
     private readonly StoragePageController _controller;
     private readonly Domain.Models.Storage _storage;
-    private readonly IStorage<Domain.Models.Product.Product> _productStorageService = new LocalStorageService<Domain.Models.Product.Product>();
-    private readonly ObservableCollection<StoredProduct> _selectedProducts = new();
-    private List<Domain.Models.Product.Product> _availableProducts;
-    private StoredProduct? _currentlyEditingProduct;
+    private ObservableCollection<ShelfDisplay> _shelfDisplayList = new ObservableCollection<ShelfDisplay>();
 
     public EditStoragePage(StoragePageController controller, Domain.Models.Storage storage)
     {
@@ -22,106 +27,67 @@ public partial class EditStoragePage : ContentPage
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         InitializeComponent();
         StorageIdEntry.Text = _storage.StorageId.ToString();
-        foreach (var storedProd in _storage.Products)
+        UpdateShelfDisplayList();
+        ShelvesCollectionView.ItemsSource = _shelfDisplayList;
+    }
+
+    private void UpdateShelfDisplayList()
+    {
+        _shelfDisplayList.Clear();
+        for (int i = 0; i < _storage.Shelves.Count; i++)
         {
-            _selectedProducts.Add(new StoredProduct
+            _shelfDisplayList.Add(new ShelfDisplay { Index = i + 1, Shelf = _storage.Shelves[i] });
+        }
+    }
+
+    private async void OnAddShelfClicked(object sender, EventArgs e)
+    {
+        if (!int.TryParse(ShelfCapacityEntry.Text, out int maxCapacity) || maxCapacity <= 0)
+        {
+            await DisplayAlert("Ошибка", "Введите корректную вместимость", "ОК");
+            return;
+        }
+        
+        await Loading.RunWithLoading(Navigation, () =>
+        {
+            var newShelf = new Shelf(Guid.NewGuid(), maxCapacity);
+            _storage.Shelves.Add(newShelf);
+            UpdateShelfDisplayList();
+            ShelfCapacityEntry.Text = string.Empty;
+            return Task.CompletedTask;
+        });
+    }
+
+
+    private void OnRemoveShelfClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is Shelf shelf)
+        {
+            if (shelf.Slots.Values.Any(p => p != null))
             {
-                ProductId = storedProd.ProductId,
-                ProductName = storedProd.ProductName,
-                Quantity = storedProd.Quantity
-            });
-        }
-        SelectedProductsCollectionView.ItemsSource = _selectedProducts;
-        _availableProducts = _productStorageService.LoadEntities(typeof(Domain.Models.Product.Product)).ToList();
-        foreach (var sp in _selectedProducts)
-        {
-            var prod = _availableProducts.FirstOrDefault(p => p.Id == sp.ProductId);
-            if (prod != null)
-                _availableProducts.Remove(prod);
-        }
-        ProductPicker.ItemsSource = _availableProducts;
-        ProductPicker.ItemDisplayBinding = new Binding("Name");
-    }
-
-    private void OnAddProductClicked(object sender, EventArgs e)
-    {
-        if (ProductPicker.SelectedItem is not Domain.Models.Product.Product selectedProduct)
-        {
-            DisplayAlert("Ошибка", "Выберите продукт", "ОК");
-            return;
-        }
-        if (!int.TryParse(QuantityEntry.Text, out int quantity) || quantity <= 0)
-        {
-            DisplayAlert("Ошибка", "Введите корректное количество", "ОК");
-            return;
-        }
-        AddProductButton.Text = "Добавить продукт";
-        if (_currentlyEditingProduct != null)
-        {
-            _currentlyEditingProduct.Quantity = quantity;
-            SelectedProductsCollectionView.ItemsSource = null;
-            SelectedProductsCollectionView.ItemsSource = _selectedProducts;
-            _currentlyEditingProduct = null;
-            ProductPicker.SelectedItem = null;
-            QuantityEntry.Text = string.Empty;
-            return;
-        }
-        var storedProduct = new StoredProduct
-        {
-            ProductId = selectedProduct.Id,
-            ProductName = selectedProduct.Name,
-            Quantity = quantity
-        };
-        _selectedProducts.Add(storedProduct);
-        _availableProducts.Remove(selectedProduct);
-        ProductPicker.ItemsSource = null;
-        ProductPicker.ItemsSource = _availableProducts;
-        ProductPicker.SelectedItem = null;
-        QuantityEntry.Text = string.Empty;
-    }
-
-    private void OnEditProductClicked(object sender, EventArgs e)
-    {
-        if (sender is Button button && button.CommandParameter is StoredProduct selected)
-        {
-            _currentlyEditingProduct = selected;
-            var product = _productStorageService.LoadEntities(typeof(Domain.Models.Product.Product))
-                            .FirstOrDefault(p => ((Domain.Models.Product.Product)p).Id == selected.ProductId)
-                            as Domain.Models.Product.Product;
-            if (product == null)
+                DisplayAlert("Ошибка", "Нельзя удалить полку, пока на ней есть товары.", "ОК");
                 return;
-            ProductPicker.SelectedItem = product;
-            QuantityEntry.Text = selected.Quantity.ToString();
-            AddProductButton.Text = "Сохранить";
+            }
+            _storage.Shelves.Remove(shelf);
+            UpdateShelfDisplayList();
         }
-    }
-
-    private void OnRemoveProductClicked(object sender, EventArgs e)
-    {
-        if (sender is not Button { CommandParameter: StoredProduct selected })
-            return;
-        if (_productStorageService.LoadEntities(typeof(Domain.Models.Product.Product))
-                .FirstOrDefault(p => ((Domain.Models.Product.Product)p).Id == selected.ProductId) is { } product)
-        {
-            _availableProducts.Add(product);
-            ProductPicker.ItemsSource = null;
-            ProductPicker.ItemsSource = _availableProducts;
-        }
-        _selectedProducts.Remove(selected);
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         try
         {
-            _storage.Products = _selectedProducts.ToList();
-            _controller.Service.EditItem(_storage);
+            await Loading.RunWithLoading(Navigation, () =>
+            {
+                _controller.Service.EditItem(_storage);
+                return Task.CompletedTask;
+            });
             await DisplayAlert("Успешно!", "Склад обновлен", "OK");
             await Navigation.PopAsync();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("Error while update storage. Caused by: " + ex.Message);
+            Debug.WriteLine("Error while updating storage. Caused by: " + ex.Message);
             await DisplayAlert("Ошибка!", "Не удалось обновить данные склада.", "ОК");
         }
         finally

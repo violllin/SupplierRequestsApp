@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using SupplierRequestsApp.Domain.Models;
-using SupplierRequestsApp.Domain.Models.Product;
 using SupplierRequestsApp.Presentation.Controllers;
 
 namespace SupplierRequestsApp.Presentation.Pages.Order;

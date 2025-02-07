@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using SupplierRequestsApp.Domain.Models.Product;
 using SupplierRequestsApp.Presentation.Controllers;
 
 namespace SupplierRequestsApp.Presentation.Pages.Product;
@@ -18,7 +17,7 @@ public partial class ProductsPage : ContentPage
     {
         try
         {
-            _controller.AddItem(new Domain.Models.Product.Product(Guid.NewGuid(), "Новый товар", new List<Guid>(), Guid.NewGuid()));
+            _controller.AddItem(new Domain.Models.Product(Guid.NewGuid(), "Новый товар", new List<Guid>(), Guid.NewGuid()));
         }
         catch (Exception ex)
         {
@@ -30,15 +29,15 @@ public partial class ProductsPage : ContentPage
     private async void OnRemoveClicked(object sender, EventArgs e)
     {
         var button = (Button)sender;
-        var storage = (Domain.Models.Product.Product?) button.CommandParameter;
+        var product = (Domain.Models.Product?) button.CommandParameter;
         bool isConfirmed = await DisplayAlert("Подтвердить удаление", 
-            $"Вы уверены что хотите удалить продукт с ID: {storage.StorageId}?", 
+            $"Вы уверены что хотите удалить продукт с ID: {product.Id}?", 
             "Да", "Нет");
         button.IsEnabled = !isConfirmed;
         if (!isConfirmed) return;
         try
         {
-            _controller.DropItem(storage);
+            _controller.DropItem(product);
         }
         catch (Exception exception)
         {

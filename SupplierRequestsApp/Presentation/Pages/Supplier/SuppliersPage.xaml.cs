@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using SupplierRequestsApp.Domain.Models.Product;
 using SupplierRequestsApp.Presentation.Controllers;
 
 namespace SupplierRequestsApp.Presentation.Pages.Supplier;
@@ -18,7 +17,7 @@ public partial class SuppliersPage : ContentPage
     {
         try
         {
-            _controller.AddItem(new Domain.Models.Supplier(Guid.NewGuid(), "Новый поставщик", "Адрес", "Телефон", new List<Domain.Models.Product.Product>()));
+            _controller.AddItem(new Domain.Models.Supplier(Guid.NewGuid(), "Новый поставщик", "Адрес", "Телефон", new List<Domain.Models.Product>()));
         }
         catch (Exception ex)
         {
@@ -30,18 +29,18 @@ public partial class SuppliersPage : ContentPage
     private async void OnRemoveClicked(object sender, EventArgs e)
     {
         var button = (Button)sender;
-        var order = (Domain.Models.Supplier?)button.CommandParameter;
+        var supplier = (Domain.Models.Supplier?)button.CommandParameter;
     
-        if (order == null) return;
+        if (supplier == null) return;
 
         bool isConfirmed = await DisplayAlert("Подтвердить удаление",
-            $"Вы уверены, что хотите удалить заказчика с ID: {order.Id}?", 
+            $"Вы уверены, что хотите удалить заказчика с ID: {supplier.Id}?", 
             "Да", "Нет");
 
         if (!isConfirmed) return;
         try
         {
-            _controller.DropItem(order);
+            _controller.DropItem(supplier);
         }
         catch (Exception exception)
         {

@@ -8,9 +8,9 @@ public class Supplier
     private string _name;
     private string _address;
     private string _phone;
-    private List<Product.Product> _products;
+    private List<Product> _products;
 
-    public Supplier(Guid id, string name, string address, string phone, List<Product.Product> products)
+    public Supplier(Guid id, string name, string address, string phone, List<Product> products)
     {
         _id = id;
         _name = name;
@@ -43,7 +43,7 @@ public class Supplier
         set => _phone = Validator.RequireNotBlank(value);
     }
 
-    public List<Product.Product> Products
+    public List<Product> Products
     {
         get => _products;
         set => _products = value;

@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using SupplierRequestsApp.Domain.Models.Product;
 using SupplierRequestsApp.Presentation.Controllers;
 
 namespace SupplierRequestsApp.Presentation.Pages.Storage;
@@ -70,10 +69,10 @@ public partial class StoragesPage : ContentPage
         }
     }
     
-    private async Task<Dictionary<Guid, int>> DisplayProductSelectionDialog(ObservableCollection<Domain.Models.Product.Product> allProducts)
+    private async Task<Dictionary<Guid, int>> DisplayProductSelectionDialog(ObservableCollection<Domain.Models.Product> allProducts)
     {
         var selectedProducts = new Dictionary<Guid, int>();
-        var productSelections = new Dictionary<Domain.Models.Product.Product, bool>();
+        var productSelections = new Dictionary<Domain.Models.Product, bool>();
 
         foreach (var product in allProducts)
             productSelections[product] = false;

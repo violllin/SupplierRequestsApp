@@ -1,5 +1,4 @@
 ﻿using SupplierRequestsApp.Data;
-using SupplierRequestsApp.Domain.Models.Product;
 
 namespace SupplierRequestsApp.Domain.Models;
 

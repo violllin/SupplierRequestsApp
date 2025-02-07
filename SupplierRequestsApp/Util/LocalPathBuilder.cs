@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using SupplierRequestsApp.Domain.Models;
-using SupplierRequestsApp.Domain.Models.Product;
 
 namespace SupplierRequestsApp.Util;
 
