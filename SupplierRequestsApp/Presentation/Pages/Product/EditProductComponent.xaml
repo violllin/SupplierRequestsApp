@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Product.EditProductComponent">
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Button Text="Назад" Clicked="OnBackClicked" HorizontalOptions="Start" />
+            <Label x:Name="TitleLabel" Text="Создание товара" FontAttributes="Bold" FontSize="20"
+                   HorizontalOptions="Center" />
+            <Label Text="Название" FontAttributes="Bold" />
+            <Entry x:Name="NameEntry" Placeholder="Введите название" />
+            <Label Text="Выберите поставщика" FontAttributes="Bold" />
+            <Picker x:Name="SuppliersPicker" SelectedIndexChanged="OnSupplierSelected"/>
+            <Label Text="Выбранные поставщики" FontAttributes="Bold" />
+            <CollectionView x:Name="SelectedSuppliersList" ItemsSource="{Binding SelectedSuppliers}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" />
+                            <Button Text="X" CommandParameter="{Binding}" Clicked="OnRemoveSupplier"
+                                    Grid.Column="1" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Label Text="Выберите полку" FontAttributes="Bold" />
+            <Picker x:Name="ShelvesPicker" ItemDisplayBinding="{Binding ., Converter={StaticResource ShelfDisplayConverter}}" />
+            <Button Text="Сохранить" Clicked="OnSaveClicked" />
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -6,4 +6,5 @@ public static class Config
     public const string SuppliersStoragePath = "Suppliers/";
     public const string OrdersStoragePath = "Orders/";
     public const string ProductsStoragePath = "Products/";
+    public const string ShelfStoragePath = "Shelves/";
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using SupplierRequestsApp.Presentation.Controllers;
 
 namespace SupplierRequestsApp.Presentation.Pages.Supplier
@@ -46,7 +47,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
                         NameEntry.Text.Trim(),
                         AddressEntry.Text.Trim(),
                         PhoneEntry.Text.Trim(),
-                        new List<Domain.Models.Product>());
+                        new List<Guid>());
                     _controller.AddItem(newSupplier);
                 }
                 else
@@ -60,7 +61,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Ошибка", "Не удалось сохранить поставщика", "ОК");
+                Debug.WriteLine($"Error while saving supplier: {ex.Message}\n{ex.StackTrace}");
+                await DisplayAlert("Не удалось сохранить поставщика", ex.Message, "ОК");
             }
         }
     }

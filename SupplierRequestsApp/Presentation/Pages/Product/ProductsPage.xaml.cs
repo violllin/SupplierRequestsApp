@@ -17,21 +17,38 @@ public partial class ProductsPage : ContentPage
     {
         try
         {
-            _controller.AddItem(new Domain.Models.Product(Guid.NewGuid(), "Новый товар", new List<Guid>(), Guid.NewGuid()));
+            await Navigation.PushAsync(new EditProductComponent(_controller));
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error while save new product. Caused by: {ex.Message}");
-            await DisplayAlert("Ошибка!", "Не удалось создать продукт.", "ОК");
+            Debug.WriteLine($"Error while open add new product page. Caused by: {ex.Message}\n{ex.StackTrace}");
+            await DisplayAlert("Не удалось открыть форму создания продукта", ex.Message, "ОК");
+        }
+    }
+
+    private async void OnEditClicked(object sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        var product = (Domain.Models.Product?)button.CommandParameter;
+        if (product == null) return;
+        try
+        {
+            await Navigation.PushAsync(new EditProductComponent(_controller, product));
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine(
+                $"Error while open edit product page. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Не удалось открыть форму редактирования продукта", exception.Message, "ОК");
         }
     }
 
     private async void OnRemoveClicked(object sender, EventArgs e)
     {
         var button = (Button)sender;
-        var product = (Domain.Models.Product?) button.CommandParameter;
-        bool isConfirmed = await DisplayAlert("Подтвердить удаление", 
-            $"Вы уверены что хотите удалить продукт с ID: {product.Id}?", 
+        var product = (Domain.Models.Product?)button.CommandParameter;
+        bool isConfirmed = await DisplayAlert("Подтвердить удаление",
+            $"Вы уверены что хотите удалить продукт с ID: {product.Id}?",
             "Да", "Нет");
         button.IsEnabled = !isConfirmed;
         if (!isConfirmed) return;
@@ -41,8 +58,8 @@ public partial class ProductsPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Error while drop product. Caused by: {e}");
-            await DisplayAlert("Ошибка!", "Не удалось удалить продукт.", "OK");
+            Debug.WriteLine($"Error while drop product. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Не удалось удалить продукт", exception.Message, "OK");
         }
         finally
         {

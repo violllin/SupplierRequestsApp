@@ -22,8 +22,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error while open adding new supplier form. Caused by: {ex.Message}");
-                await DisplayAlert("Ошибка!", "Не удалось открыть форму создания поставщика.", "ОК");
+                Debug.WriteLine($"Error while open adding new supplier form. Caused by: {ex.Message}\n{ex.StackTrace}");
+                await DisplayAlert("Не удалось открыть форму создания поставщика", ex.Message, "ОК");
             }
         }
 
@@ -38,8 +38,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error while editing supplier. Caused by: {ex.Message}");
-                await DisplayAlert("Ошибка!", "Не удалось открыть форму редактирования поставщика.", "ОК");
+                Debug.WriteLine($"Error while editing supplier. Caused by: {ex.Message}\n{ex.StackTrace}");
+                await DisplayAlert("Не удалось открыть форму редактирования поставщика", ex.Message, "ОК");
             }
         }
 
@@ -58,8 +58,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
             }
             catch (Exception exception)
             {
-                Debug.WriteLine($"Error while drop supplier. Caused by: {exception.Message}");
-                await DisplayAlert("Ошибка!", "Не удалось удалить поставщика.", "ОК");
+                Debug.WriteLine($"Error while drop supplier. Caused by: {exception.Message}\n{exception.StackTrace}");
+                await DisplayAlert("Не удалось удалить поставщика", exception.Message, "ОК");
             }
         }
     }

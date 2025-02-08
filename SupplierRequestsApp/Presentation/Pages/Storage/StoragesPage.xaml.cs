@@ -19,14 +19,12 @@ public partial class StoragesPage : ContentPage
     {
         try
         {
-            // todo add product selection dialog
-            // var products = await DisplayProductSelectionDialog([new Domain.Models.Product.Product(Guid.NewGuid(), "Test product", new List<Guid>{Guid.NewGuid()}, Guid.NewGuid() )]);
             _controller.AddItem(new Domain.Models.Storage(Guid.NewGuid(), []));
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error while save new storage. Caused by: {ex.Message}");
-            await DisplayAlert("Ошибка!", "Не удалось создать склад.", "ОК");
+            Debug.WriteLine($"Error while save new storage. Caused by: {ex.Message}\n{ex.StackTrace}");
+            await DisplayAlert("Не удалось создать склад", ex.Message, "ОК");
         }
     }
 
@@ -40,8 +38,8 @@ public partial class StoragesPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Error while open EditStoragePage with storage argument. Caused by: {exception}");
-            await DisplayAlert("Ошибка!", "Ошибка при попытке открыть страницу.", "ОК");
+            Debug.WriteLine($"Error while open EditStoragePage with storage argument. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Не удалось открыть форму редактирования склада", exception.Message, "ОК");
         }
     }
 
@@ -50,7 +48,7 @@ public partial class StoragesPage : ContentPage
         var button = (Button)sender;
         var storage = (Domain.Models.Storage?) button.CommandParameter;
         bool isConfirmed = await DisplayAlert("Подтвердить удаление", 
-            $"Вы уверены что хотите удалить склад с ID: {storage.StorageId}?", 
+            $"Вы уверены что хотите удалить склад с ID: {storage.Id}?", 
             "Да", "Нет");
         button.IsEnabled = !isConfirmed;
         if (!isConfirmed) return;
@@ -60,8 +58,8 @@ public partial class StoragesPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Error while drop storage. Caused by: {e}");
-            await DisplayAlert("Ошибка!", "Не удалось удалить склад.", "OK");
+            Debug.WriteLine($"Error while drop storage. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Не удалось удалить склад", exception.Message, "OK");
         }
         finally
         {

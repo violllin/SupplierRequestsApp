@@ -7,16 +7,18 @@ public class Product
     private Guid _id;
     private string _name;
     private List<Guid> _suppliersId;
-    private Guid? _shelfId;
-    private int? _slotIndex;
+    private Guid _shelfId;
+    private Guid _previosShelfId;
+    private List<Guid> _previosSuppliersId;
 
-    public Product(Guid id, string name, List<Guid> suppliersId, Guid? shelfId = null, int? slotIndex = null)
+    public Product(Guid id, string name, List<Guid> suppliersId, Guid shelfId, Guid previosShelfId, List<Guid> previosSuppliersId)
     {
         _id = id;
-        _name = Validator.RequireNotBlank(name);
+        _name = name;
         _suppliersId = suppliersId;
         _shelfId = shelfId;
-        _slotIndex = slotIndex;
+        _previosShelfId = previosShelfId;
+        _previosSuppliersId = previosSuppliersId;
     }
 
     public Guid Id
@@ -37,21 +39,21 @@ public class Product
         set => _suppliersId = value;
     }
 
-    public Guid? ShelfId
+    public Guid ShelfId
     {
         get => _shelfId;
         set => _shelfId = value;
     }
 
-    public int? SlotIndex
+    public List<Guid> PreviosSuppliersId
     {
-        get => _slotIndex;
-        set => _slotIndex = value;
+        get => _previosSuppliersId;
+        set => _previosSuppliersId = value;
     }
 
-    public void UpdateStorageLocation(Guid shelfId, int slotIndex)
+    public Guid PreviosShelfId
     {
-        _shelfId = shelfId;
-        _slotIndex = slotIndex;
+        get => _previosShelfId;
+        set => _previosShelfId = value;
     }
 }

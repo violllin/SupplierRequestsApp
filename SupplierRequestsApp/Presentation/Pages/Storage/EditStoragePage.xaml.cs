@@ -19,14 +19,14 @@ public partial class EditStoragePage : ContentPage
 {
     private readonly StoragePageController _controller;
     private readonly Domain.Models.Storage _storage;
-    private ObservableCollection<ShelfDisplay> _shelfDisplayList = new ObservableCollection<ShelfDisplay>();
+    private ObservableCollection<ShelfDisplay> _shelfDisplayList = [];
 
     public EditStoragePage(StoragePageController controller, Domain.Models.Storage storage)
     {
         _controller = controller ?? throw new ArgumentNullException(nameof(controller));
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         InitializeComponent();
-        StorageIdEntry.Text = _storage.StorageId.ToString();
+        StorageIdEntry.Text = _storage.Id.ToString();
         UpdateShelfDisplayList();
         ShelvesCollectionView.ItemsSource = _shelfDisplayList;
     }
@@ -34,9 +34,10 @@ public partial class EditStoragePage : ContentPage
     private void UpdateShelfDisplayList()
     {
         _shelfDisplayList.Clear();
-        for (int i = 0; i < _storage.Shelves.Count; i++)
+        int i = 1;
+        foreach (var shelf in _controller.GetShelves(_storage.Id))
         {
-            _shelfDisplayList.Add(new ShelfDisplay { Index = i + 1, Shelf = _storage.Shelves[i] });
+            _shelfDisplayList.Add(new ShelfDisplay{Index = i++, Shelf = shelf});
         }
     }
 
@@ -44,14 +45,15 @@ public partial class EditStoragePage : ContentPage
     {
         if (!int.TryParse(ShelfCapacityEntry.Text, out int maxCapacity) || maxCapacity <= 0)
         {
-            await DisplayAlert("Ошибка", "Введите корректную вместимость", "ОК");
+            await DisplayAlert("Внимание", "Введите корректную вместимость", "ОК");
             return;
         }
         
         await Loading.RunWithLoading(Navigation, () =>
         {
-            var newShelf = new Shelf(Guid.NewGuid(), maxCapacity);
-            _storage.Shelves.Add(newShelf);
+            var newShelf = new Shelf(Guid.NewGuid(), maxCapacity, _storage.Id);
+            _storage.Shelves.Add(newShelf.Id);
+            _controller.AddShelf(newShelf);
             UpdateShelfDisplayList();
             ShelfCapacityEntry.Text = string.Empty;
             return Task.CompletedTask;
@@ -59,16 +61,17 @@ public partial class EditStoragePage : ContentPage
     }
 
 
-    private void OnRemoveShelfClicked(object sender, EventArgs e)
+    private async void OnRemoveShelfClicked(object sender, EventArgs e)
     {
         if (sender is Button btn && btn.CommandParameter is Shelf shelf)
         {
             if (shelf.Slots.Values.Any(p => p != null))
             {
-                DisplayAlert("Ошибка", "Нельзя удалить полку, пока на ней есть товары.", "ОК");
+                await DisplayAlert("Ошибка", "Нельзя удалить полку, пока на ней есть товары.", "ОК");
                 return;
             }
-            _storage.Shelves.Remove(shelf);
+            _storage.Shelves.Remove(shelf.Id);
+            _controller.DropShelf(shelf);
             UpdateShelfDisplayList();
         }
     }
@@ -82,13 +85,12 @@ public partial class EditStoragePage : ContentPage
                 _controller.Service.EditItem(_storage);
                 return Task.CompletedTask;
             });
-            await DisplayAlert("Успешно!", "Склад обновлен", "OK");
             await Navigation.PopAsync();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("Error while updating storage. Caused by: " + ex.Message);
-            await DisplayAlert("Ошибка!", "Не удалось обновить данные склада.", "ОК");
+            Debug.WriteLine("Error while updating storage. Caused by: " + ex.Message + "\n" + ex.StackTrace);
+            await DisplayAlert("Не удалось обновить данные склада", ex.Message, "ОК");
         }
         finally
         {

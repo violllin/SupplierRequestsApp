@@ -78,7 +78,8 @@ public class LocalPath
             not null when type == typeof(Storage) => Config.StoragesStoragePath,
             not null when type == typeof(Order) => Config.OrdersStoragePath,
             not null when type == typeof(Product) => Config.ProductsStoragePath,
-            _ => throw new ArgumentException($"No path to folder for type {type}")
+            not null when type == typeof(Shelf) => Config.ShelfStoragePath,
+            _ => throw new UndefinedFolderTypeException($"Не найден путь до хранилища для объекта с типом: {type}")
         };
         Directory += typeDir;
     }
@@ -96,7 +97,7 @@ public class LocalPath
             case Storage storage:
                 sb.Append(Config.StoragesStoragePath);
                 if (withId)
-                    Filename = storage.StorageId.ToString();
+                    Filename = storage.Id.ToString();
                 break;
             case Order order:
                 sb.Append(Config.OrdersStoragePath);
@@ -108,8 +109,13 @@ public class LocalPath
                 if (withId)
                     Filename = product.Id.ToString();
                 break;
+            case Shelf shelf:
+                sb.Append(Config.ShelfStoragePath);
+                if (withId)
+                    Filename = shelf.Id.ToString();
+                break;
             default:
-                throw new ArgumentException($"No path for object with type {item.GetType()}");
+                throw new UndefinedFolderTypeException($"Не найден путь до хранилища для объекта с типом: {item.GetType()}");
         }
         Directory = sb.ToString();
     }

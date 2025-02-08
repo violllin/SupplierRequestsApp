@@ -21,8 +21,8 @@ public partial class MainPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Can't open storages page. Caused by: {exception.Message}");
-            await DisplayAlert("Ошибка!", "Произошла ошибка при попытке открыть страницу.", "ОК");
+            Debug.WriteLine($"Can't open storages page. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Произошла ошибка при попытке открыть страницу", exception.Message, "ОК");
         }
     }
 
@@ -35,8 +35,8 @@ public partial class MainPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Can't open orders page. Caused by: {exception.Message}");
-            await DisplayAlert("Ошибка!", "Произошла ошибка при попытке открыть страницу.", "ОК");
+            Debug.WriteLine($"Can't open orders page. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Произошла ошибка при попытке открыть страницу", exception.Message, "ОК");
         }
     }
 
@@ -48,8 +48,8 @@ public partial class MainPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Can't open suppliers page. Caused by: {exception.Message}");
-            await DisplayAlert("Ошибка!", "Произошла ошибка при попытке открыть страницу.", "ОК");
+            Debug.WriteLine($"Can't open suppliers page. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Произошла ошибка при попытке открыть страницу", exception.Message, "ОК");
         }
     }
 
@@ -61,8 +61,8 @@ public partial class MainPage : ContentPage
         }
         catch (Exception exception)
         {
-            Debug.WriteLine($"Can't open products page. Caused by: {exception.Message}");
-            await DisplayAlert("Ошибка!", "Произошла ошибка при попытке открыть страницу.", "ОК");
+            Debug.WriteLine($"Can't open products page. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Произошла ошибка при попытке открыть страницу", exception.Message, "ОК");
         }
     }
 }

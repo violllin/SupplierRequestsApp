@@ -29,16 +29,16 @@ public class TableService<T> : ITableService<T> where T: class
 
     public void DropItem(object item)
     {
-        _storageService.DropEntity(item as T ?? throw new InvalidOperationException("Invalid item to drop"));
+        _storageService.DropEntity(item as T ?? throw new InvalidOperationException("Неизвестный элемент для удаления"));
     }
 
     public void AddItem(object item)
     {
-        _storageService.SaveEntity(item as T ?? throw new InvalidOperationException("Invalid item to add"));
+        _storageService.SaveEntity(item as T ?? throw new InvalidOperationException("Неизвестный элемент для добавления"));
     }
 
     public void EditItem(object item)
     {
-        _storageService.UpdateEntity(item as T ?? throw new InvalidOperationException("Invalid item to edit"));
+        _storageService.UpdateEntity(item as T ?? throw new InvalidOperationException("Неизвестный элемент для редактирования"));
     }
 }

@@ -10,14 +10,14 @@
         <Button Text="Склады"
                 Clicked="OnStoragesPageClicked" 
                 VerticalOptions="Center"/>
-        <Button Text="Заказы"
-                Clicked="OnOrdersPageClicked" 
-                VerticalOptions="Center"/>
         <Button Text="Поставщики"
                 Clicked="OnSupplierPageClicked" 
                 VerticalOptions="Center"/>
         <Button Text="Продукты"
                 Clicked="OnProductPageClicked" 
+                VerticalOptions="Center"/>
+        <Button Text="Заказы"
+                Clicked="OnOrdersPageClicked" 
                 VerticalOptions="Center"/>
     </StackLayout>
 
