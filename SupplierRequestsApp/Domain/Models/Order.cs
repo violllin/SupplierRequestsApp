@@ -9,9 +9,9 @@ public class Order
     private Guid _supplierId;
     private List<OrderItem> _orderProducts;
     private DeliveryStatus _deliveryStatus;
-    private OrderPayStatus _orderPayStatus;
+    private PayStatus _payStatus;
 
-    public Order(Guid id, DateTime dateCreated, Guid supplierId, List<OrderItem> orderProducts, DeliveryStatus deliveryStatus, OrderPayStatus payStatus)
+    public Order(Guid id, DateTime dateCreated, Guid supplierId, List<OrderItem> orderProducts, DeliveryStatus deliveryStatus, PayStatus payStatus)
     {
         Id = id;
         DateCreated = dateCreated;
@@ -45,10 +45,10 @@ public class Order
         set => _deliveryStatus = value;
     }
 
-    public OrderPayStatus PayStatus
+    public PayStatus PayStatus
     {
-        get => _orderPayStatus;
-        set => _orderPayStatus = value;
+        get => _payStatus;
+        set => _payStatus = value;
     }
 
     public DateTime DateCreated
@@ -56,18 +56,31 @@ public class Order
         get => _dateCreated;
         set => _dateCreated = value;
     }
+    
+    public void AddProductToOrder(OrderItem orderItem)
+    {
+        OrderProducts.Add(orderItem);
+    }
+    
+    public void DropProductFromOrder(OrderItem orderItem)
+    {
+        OrderProducts.Remove(orderItem);
+    }
 }
 
 public enum DeliveryStatus
 {
-    SENT,
-    RECEIVED,
-    REFUND,
-    PAYMENT_WAIT
+    NotCreated = 0, 
+    Created,
+    InDelivery,
+    Delivered,
+    Received,
+    Refund
 }
-public enum OrderPayStatus
+
+public enum PayStatus
 {
-    PAID,
-    NOT_PAID,
-    REFUND
+    Paid,
+    NotPaid,
+    Refund
 }

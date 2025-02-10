@@ -77,6 +77,7 @@ public class LocalPath
             not null when type == typeof(Supplier) => Config.SuppliersStoragePath,
             not null when type == typeof(Storage) => Config.StoragesStoragePath,
             not null when type == typeof(Order) => Config.OrdersStoragePath,
+            not null when type == typeof(OrderItem) => Config.OrderItemsStoragePath,
             not null when type == typeof(Product) => Config.ProductsStoragePath,
             not null when type == typeof(Shelf) => Config.ShelfStoragePath,
             _ => throw new UndefinedFolderTypeException($"Не найден путь до хранилища для объекта с типом: {type}")
@@ -103,6 +104,11 @@ public class LocalPath
                 sb.Append(Config.OrdersStoragePath);
                 if (withId)
                     Filename = order.Id.ToString();
+                break;
+            case OrderItem orderItem:
+                sb.Append(Config.OrderItemsStoragePath);
+                if (withId)
+                    Filename = orderItem.Id.ToString();
                 break;
             case Product product:
                 sb.Append(Config.ProductsStoragePath);

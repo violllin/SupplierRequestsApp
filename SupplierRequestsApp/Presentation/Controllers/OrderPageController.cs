@@ -10,6 +10,8 @@ using Domain.Service;
 public class OrdersPageController
 {
     public readonly ITableService<Order> Service = new TableService<Order>();
+    private readonly ProductsPageController _productsPageController = new();
+    private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
 
     public OrdersPageController()
     {
@@ -48,4 +50,19 @@ public class OrdersPageController
         Orders.Remove(order);
         Service.UpdateTable();
     }
+
+    
 }
+
+public class StockItem
+{
+    public Product Product { get; set; }
+    public int Quantity { get; set; }
+    
+    public StockItem(Product product, int quantity)
+    {
+        Product = product;
+        Quantity = quantity;
+    }
+}
+
