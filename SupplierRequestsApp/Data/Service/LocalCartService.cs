@@ -13,7 +13,8 @@ public class LocalCartService : ICartService
 
     public LocalCartService()
     {
-        _order = _orderService.LoadEntities(typeof(Order)).First(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
+        _order = _orderService.LoadEntities(typeof(Order))
+            .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
     }
     
     private Order CreateDraftOrder(Guid supplierId)
