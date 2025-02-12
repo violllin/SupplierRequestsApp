@@ -35,7 +35,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
 
                 if (int.TryParse(result, out int quantity) && quantity > 0)
                 {
-                    _controller.AddProductToCart(selectedProduct.Product, quantity, selectedSupplier.Id);
+                    _controller.AddProductToCart(selectedProduct.Product, quantity, selectedSupplier.Id, selectedSupplierName);
                 }
                 else
                 {
@@ -47,6 +47,35 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
                 Debug.WriteLine($"Cannot add product to cart. Caused by: {exception.Message}\n{exception.StackTrace}");
                 await DisplayAlert("Ошибка", exception.Message, "ОК");
             }
+        }
+
+        private async void OnRemoveFromCartClicked(object? sender, EventArgs e)
+        {
+            if (sender is not Button {BindingContext: OrderItem item}) return;
+
+            try
+            {
+                _controller.DropItemFromCart(item);
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error while drop product from cart. Caused by: {exception.Message}\n{exception.StackTrace}");
+                await DisplayAlert("Не удалось удалить продукт из корзины.", exception.Message, "OK");
+            }
+        }
+
+        private async void OnClearCartClicked(object? sender, EventArgs e)
+        {
+            try
+            {
+                _controller.DropCart();
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error while drop cart. Caused by: {exception.Message}\n{exception.StackTrace}");
+                await DisplayAlert("Не удалось очистить корзину.", exception.Message, "OK");
+            }
+            
         }
     }
 }

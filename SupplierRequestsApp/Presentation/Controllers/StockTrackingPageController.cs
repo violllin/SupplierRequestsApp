@@ -13,13 +13,14 @@ public class StockTrackingPageController
     private readonly IStorage<Supplier> _supplierService = new LocalStorageService<Supplier>();
     private readonly ICartService _cartService = new LocalCartService();
 
-    public ObservableCollection<StockItem> DeficitProducts { get; set; }
+    public ObservableCollection<StockItem> DeficitProducts { get; set; } = [];
+    public ObservableCollection<OrderItem> CartProducts { get; set; } = [];
 
     public StockTrackingPageController()
     {
         try
         {
-            UpdateTable();
+            UpdateTables();
         }
         catch (Exception e)
         {
@@ -27,12 +28,32 @@ public class StockTrackingPageController
         }
     }
 
-    private void UpdateTable()
+    private void UpdateTables()
     {
-        var newList = new ObservableCollection<StockItem>(LoadStockDeficitProducts());
-        DeficitProducts = newList;
+        DeficitProducts.Clear();
+        CartProducts.Clear();
+
+        var cartProducts = new ObservableCollection<OrderItem>(LoadCartProducts());
+        foreach (var cartProduct in cartProducts)
+        {
+            CartProducts.Add(cartProduct);
+        }
+        var deficitProducts = 
+            new ObservableCollection<StockItem>(LoadStockDeficitProducts())
+                .Where(dp => CartProducts.All(cp => cp.Product.Id != dp.Product.Id))
+            .ToList();
+        foreach (var deficitProduct in deficitProducts)
+        {
+            DeficitProducts.Add(deficitProduct);
+        }
     }
 
+
+    private List<OrderItem> LoadCartProducts()
+    {
+        return _cartService.LoadCart();
+    }
+    
     private List<StockItem> LoadStockDeficitProducts()
     {
         var shelves = _productsPageController.LoadShelves(_productsPageController.LoadStorages());
@@ -42,7 +63,7 @@ public class StockTrackingPageController
         {
             foreach (var slot in shelf.Slots.Where(s => s.Value.HasValue))
             {
-                var product = _productService.LoadEntity(typeof(Product), slot.Value.ToString()!) as Product;
+                var product = _productService.LoadEntity(typeof(Product), slot.Value.ToString()!);
                 if (product == null) continue;
 
                 var existingItem = stockItems.FirstOrDefault(item => item.Product == product);
@@ -60,16 +81,17 @@ public class StockTrackingPageController
         return stockItems;
     }
 
-    public void AddProductToCart(Product product, int quantity, Guid supplierId)
+    public void AddProductToCart(Product product, int quantity, Guid supplierId, string supplierName)
     {
-        _cartService.AddProduct(product, quantity, supplierId);
+        var orderItem = _cartService.AddProduct(product, quantity, supplierId, supplierName);
         DeficitProducts.Remove(DeficitProducts.FirstOrDefault(si => si.Product == product)!);
+        CartProducts.Add(orderItem);
     }
     
-    public void DropProductFromCart(Product product)
+    public void DropItemFromCart(OrderItem orderItem)
     {
-        _cartService.DropProduct(product: product);
-        DeficitProducts.Add(new StockItem(product, 1314));
+        _cartService.DropItem(orderItem: orderItem);
+        UpdateTables();
     }
 
     public List<Supplier?> LoadSuppliers(List<Guid> supplierIds)
@@ -79,5 +101,11 @@ public class StockTrackingPageController
                     id.ToString()))
             .Where(supplier => supplier != null)
             .ToList() ?? throw new SupplierNotFoundException("Не найдено ни одного поставщика для данного товара");
+    }
+
+    public void DropCart()
+    {
+        _cartService.DropCart();
+        UpdateTables();
     }
 }

@@ -13,8 +13,17 @@ public class LocalCartService : ICartService
 
     public LocalCartService()
     {
-        _order = _orderService.LoadEntities(typeof(Order))
-            .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
+        try
+        {
+            _order = _orderService.LoadEntities(typeof(Order))
+                .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Error while load order. Setting as null. Caused by: {e.Message}\n{e.StackTrace}");
+            _order = null;
+        }
+        
     }
     
     private Order CreateDraftOrder(Guid supplierId)
@@ -25,59 +34,52 @@ public class LocalCartService : ICartService
         return order;
     }
 
-    private OrderItem CreateOrderItem(Guid orderId, Product product, Guid supplierId, int quantity)
+    private OrderItem CreateOrderItem(Guid orderId, Product product, Guid supplierId, int quantity, string supplierName)
     {
         var newOrderItem = new OrderItem(id: Guid.NewGuid(), orderId: orderId, product: product,
-            supplierId: supplierId, quantity: quantity);
+            supplierId: supplierId, quantity: quantity, supplierName: supplierName);
         _orderItemService.SaveEntity(newOrderItem);
         return newOrderItem;
     }
 
-    public void AddProduct(Product product, int quantity, Guid supplierId)
+    public OrderItem AddProduct(Product product, int quantity, Guid supplierId, string supplierName)
     {
         try
         {
-            if (_order == null)
-            {
-                var order = CreateDraftOrder(supplierId: supplierId);
-                var newOrderItem = CreateOrderItem(orderId: order.Id, product: product, supplierId: supplierId,
-                    quantity: quantity);
-                order.AddProductToOrder(newOrderItem);
-                _orderItemService.SaveEntity(newOrderItem);
-            }
-            else
-            {
-                var newOrderItem = CreateOrderItem(orderId: _order.Id, product: product,
-                    supplierId: supplierId, quantity: quantity);
-                _order.AddProductToOrder(newOrderItem);
-                _orderService.UpdateEntity(_order);
-            }
-        }
-        catch (DirectoryNotFoundException e)
-        {
-            Debug.WriteLine("Can't find the orders dir. Creating a new one. Caused by: " + e.Message + "\n" + e.StackTrace);
-            var order = CreateDraftOrder(supplierId: supplierId);
-            var newOrderItem = CreateOrderItem(orderId: order.Id, product: product, supplierId: supplierId,
-                quantity: quantity);
-            order.AddProductToOrder(newOrderItem);
-            _orderService.UpdateEntity(order);
-            _orderItemService.SaveEntity(newOrderItem);
+            _order ??= CreateDraftOrder(supplierId: supplierId);
+            var newOrderItem = CreateOrderItem(orderId: _order.Id, product: product,
+                supplierId: supplierId, quantity: quantity, supplierName: supplierName);
+            _order.AddProductToOrder(newOrderItem);
+            _orderService.UpdateEntity(_order);
+            return newOrderItem;
         }
         catch (Exception e)
         {
-            Debug.WriteLine("Error while adding product to cart: " + e.Message + "\n" + e.StackTrace);
+            Debug.WriteLine("Error while adding orderItem to cart: " + e.Message + "\n" + e.StackTrace);
             throw;
         }
     }
 
-    public void DropProduct(Product product)
+    public void DropItem(OrderItem orderItem)
     {
-        var orderItem = _orderItemService.LoadEntities(typeof(OrderItem)).FirstOrDefault(oi => oi.Product == product) ??
-                        throw new OrderItemNotFoundException("Товар не найден в корзине.");
-        var order = _orderService.LoadEntities(typeof(Order)).FirstOrDefault(o => o.Id == orderItem.OrderId) ??
-                    throw new OrderNotFoundException("Заказ не найден.");
-        order.OrderProducts.Remove(orderItem);
-        _orderService.UpdateEntity(order);
+        _order?.OrderProducts.Remove(orderItem);
+        _orderService.UpdateEntity(_order!);
         _orderItemService.DropEntity(orderItem);
+    }
+
+    public void DropCart()
+    {
+        if (_order == null) throw new OrderNotFoundException("Корзина не найдена.");
+        foreach (var orderItem in _order.OrderProducts)
+        {
+            _orderItemService.DropEntity(orderItem);
+        }
+        _order.ClearOrderProducts();
+        _orderService.SaveEntity(_order);
+    }
+
+    public List<OrderItem> LoadCart()
+    {
+        return _order != null ? _order.OrderProducts : [];
     }
 }

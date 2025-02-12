@@ -66,6 +66,11 @@ public class Order
     {
         OrderProducts.Remove(orderItem);
     }
+
+    public void ClearOrderProducts()
+    {
+        OrderProducts.Clear();
+    }
 }
 
 public enum DeliveryStatus
