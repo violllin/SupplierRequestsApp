@@ -77,5 +77,18 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
             }
             
         }
+
+        private async void OnPlaceOrderClicked(object? sender, EventArgs e)
+        {
+            try
+            {
+                _controller.PlaceOrder();
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error while placing order. Caused by: {exception.Message}");
+                await DisplayAlert("Не удалось оформить заказ.", exception.Message, "OK");
+            }
+        }
     }
 }

@@ -7,5 +7,8 @@ public interface ICartService
     OrderItem AddProduct(Product product, int quantity, Guid supplierId, string supplierName);
     void DropItem(OrderItem orderItem);
     void DropCart();
-    List<OrderItem> LoadCart();
+    List<OrderItem> GetCart();
+    List<Order> GetOrders();
+
+    void PlaceOrder();
 }

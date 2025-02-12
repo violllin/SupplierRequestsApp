@@ -92,7 +92,7 @@
                         <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <Button Text="Оформить заказ" Grid.Column="0" HorizontalOptions="Fill" Padding="10"/>
+                    <Button Text="Оформить заказ" Grid.Column="0" HorizontalOptions="Fill" Padding="10" Clicked="OnPlaceOrderClicked"/>
                     <Button Text="Очистить" Grid.Column="1" BackgroundColor="DarkRed" TextColor="White"
                             HorizontalOptions="Fill" Padding="10" Clicked="OnClearCartClicked"/>
                 </Grid>

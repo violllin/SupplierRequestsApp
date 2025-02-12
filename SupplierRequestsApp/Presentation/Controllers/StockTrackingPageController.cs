@@ -38,20 +38,34 @@ public class StockTrackingPageController
         {
             CartProducts.Add(cartProduct);
         }
-        var deficitProducts = 
-            new ObservableCollection<StockItem>(LoadStockDeficitProducts())
-                .Where(dp => CartProducts.All(cp => cp.Product.Id != dp.Product.Id))
+
+        var orders = LoadOrders();
+        var excludedStatuses = new[] { DeliveryStatus.NotCreated, DeliveryStatus.Refund, DeliveryStatus.Received };
+        var activeOrderProducts = orders
+            .Where(order => !excludedStatuses.Contains(order.DeliveryStatus))
+            .SelectMany(order => order.OrderProducts)
+            .Select(item => item.Product.Id)
+            .ToHashSet();
+
+        var deficitProducts = new ObservableCollection<StockItem>(LoadStockDeficitProducts())
+            .Where(dp => !activeOrderProducts.Contains(dp.Product.Id) &&
+                         CartProducts.All(cp => cp.Product.Id != dp.Product.Id))
             .ToList();
+
         foreach (var deficitProduct in deficitProducts)
         {
             DeficitProducts.Add(deficitProduct);
         }
     }
 
-
     private List<OrderItem> LoadCartProducts()
     {
-        return _cartService.LoadCart();
+        return _cartService.GetCart();
+    }
+
+    private List<Order> LoadOrders()
+    {
+        return _cartService.GetOrders();
     }
     
     private List<StockItem> LoadStockDeficitProducts()
@@ -106,6 +120,12 @@ public class StockTrackingPageController
     public void DropCart()
     {
         _cartService.DropCart();
+        UpdateTables();
+    }
+
+    public void PlaceOrder()
+    {
+        _cartService.PlaceOrder();
         UpdateTables();
     }
 }

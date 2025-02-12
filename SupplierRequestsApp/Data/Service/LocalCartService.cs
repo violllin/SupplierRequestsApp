@@ -8,22 +8,42 @@ namespace SupplierRequestsApp.Data.Service;
 public class LocalCartService : ICartService
 {
     private Order? _order;
+    private List<Order>? _orders;
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
     private readonly IStorage<OrderItem> _orderItemService = new LocalStorageService<OrderItem>();
 
     public LocalCartService()
     {
+        _order = LoadOrder();
+        _orders = LoadOrders();
+    }
+
+    private Order? LoadOrder()
+    {
         try
         {
-            _order = _orderService.LoadEntities(typeof(Order))
+            return _orderService.LoadEntities(typeof(Order))
                 .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
         }
         catch (Exception e)
         {
-            Debug.WriteLine($"Error while load order. Setting as null. Caused by: {e.Message}\n{e.StackTrace}");
-            _order = null;
+            Debug.WriteLine($"Can't load order. Caused by: {e.Message}");
+            return null;
         }
-        
+    }
+
+
+    private List<Order>? LoadOrders()
+    {
+        try
+        {
+            return _orderService.LoadEntities(typeof(Order)).ToList();
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Can't load orders. Caused by: {e.Message}");
+            return null;
+        }
     }
     
     private Order CreateDraftOrder(Guid supplierId)
@@ -78,8 +98,24 @@ public class LocalCartService : ICartService
         _orderService.SaveEntity(_order);
     }
 
-    public List<OrderItem> LoadCart()
+    public List<OrderItem> GetCart()
     {
-        return _order != null ? _order.OrderProducts : [];
+        return _order?.OrderProducts ?? [];
+    }
+
+    public List<Order> GetOrders()
+    {
+        return _orders ?? [];
+    }
+
+    public void PlaceOrder()
+    {
+        if (_order == null) throw new OrderNotFoundException("Для начала заполните корзину.");
+        if (_order.OrderProducts.Count == 0)
+            throw new PlacingOrderWithEmptyProductsException("Для начала заполните козину.");
+        _order.DeliveryStatus = DeliveryStatus.Created;
+        _orderService.UpdateEntity(_order);
+        _order = null;
+        _orders = LoadOrders();
     }
 }
