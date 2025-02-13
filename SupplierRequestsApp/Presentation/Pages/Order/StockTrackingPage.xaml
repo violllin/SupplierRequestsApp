@@ -1,6 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SupplierRequestsApp.Presentation.Pages.Order.StockTrackingPage">
+             x:Class="SupplierRequestsApp.Presentation.Pages.Order.StockTrackingPage"
+             Title="Учет товаров">
     <ContentPage.Content>
         <Grid Padding="20" ColumnSpacing="15">
             <Grid.ColumnDefinitions>
@@ -10,8 +11,6 @@
             </Grid.ColumnDefinitions>
 
             <VerticalStackLayout Grid.Column="0" Spacing="15">
-                <Label Text="Учет кол-ва товаров" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
-
                 <Button Text="Заказать отдельный товар" Clicked="OnAddNonDeficitProductToCart_Clicked" HorizontalOptions="Center"/>
 
                 <Grid Padding="5" BackgroundColor="Transparent">
@@ -81,7 +80,7 @@
                                 <Label Text="{Binding Product.Name}" Grid.Column="0" VerticalOptions="Center"/>
                                 <Label Text="{Binding SupplierName}" Grid.Column="1" VerticalOptions="Center"/>
                                 <Label Text="{Binding Quantity}" Grid.Column="2" VerticalOptions="Center"/>
-                                <Button Text="X" Grid.Column="3" BackgroundColor="Red" TextColor="White"
+                                <Button Text="🗑️" Grid.Column="3" BackgroundColor="Red" TextColor="White"
                                         Clicked="OnRemoveFromCartClicked" CommandParameter="{Binding .}"/>
                             </Grid>
                         </DataTemplate>

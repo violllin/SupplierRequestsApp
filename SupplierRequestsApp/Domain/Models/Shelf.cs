@@ -107,7 +107,7 @@ public class Shelf
 
         if (!found)
         {
-            throw new NoMatchingItemOnShelf($"Такого товара нет на этой полке. ShelfId: {_id}, ProductId: {productId}");
+            Debug.WriteLine($"Такого товара нет на этой полке. ShelfId: {_id}, ProductId: {productId}");
         }
     }
 }

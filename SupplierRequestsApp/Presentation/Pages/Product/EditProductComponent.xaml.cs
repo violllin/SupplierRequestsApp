@@ -13,6 +13,14 @@ namespace SupplierRequestsApp.Presentation.Pages.Product
         private Domain.Models.Product? _product;
         public ObservableCollection<Domain.Models.Supplier> SelectedSuppliers { get; set; } = [];
 
+        public EditProductComponent(ProductsPageController controller, Domain.Models.Product? product = null)
+        {
+            InitializeComponent();
+            _controller = controller;
+            BindingContext = this;
+            LoadPageData(product);
+        }
+        
         private (List<Domain.Models.Supplier>, List<Shelf>) BindPickers(Domain.Models.Product? product)
         {
             var suppliers = _controller.LoadSuppliers();
@@ -52,17 +60,9 @@ namespace SupplierRequestsApp.Presentation.Pages.Product
             var (suppliers, shelves) = BindPickers(product);
             if (product == null) return;
             _product = product;
-            TitleLabel.Text = "Редактирование товара";
+            Title = "Редактирование товара";
             NameEntry.Text = _product.Name;
             BindSelectedSuppliers(suppliers, product);
-        }
-
-        public EditProductComponent(ProductsPageController controller, Domain.Models.Product? product = null)
-        {
-            InitializeComponent();
-            _controller = controller;
-            BindingContext = this;
-            LoadPageData(product);
         }
 
         private void OnSupplierSelected(object sender, EventArgs e)
@@ -72,7 +72,6 @@ namespace SupplierRequestsApp.Presentation.Pages.Product
             {
                 SelectedSuppliers.Add(selectedSupplier);
             }
-
             SuppliersPicker.SelectedItem = null;
         }
 
@@ -87,7 +86,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Product
 
         private async void OnSaveClicked(object sender, EventArgs e)
         {
-            string name = NameEntry.Text;
+            var name = NameEntry.Text;
             var selectedShelf = ShelvesPicker.SelectedItem as Shelf;
 
             if (string.IsNullOrWhiteSpace(name) || SelectedSuppliers.Count == 0 || selectedShelf == null)

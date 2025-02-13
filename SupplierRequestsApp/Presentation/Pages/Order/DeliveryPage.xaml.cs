@@ -7,7 +7,7 @@ public partial class DeliveryPage : ContentPage
 {
 
     private readonly DeliveryPageController _controller = new();
-    private bool _isArchiveShown = false;
+    private bool _isArchiveShown;
     public DeliveryPage()
     {
         InitializeComponent();

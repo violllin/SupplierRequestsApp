@@ -9,13 +9,12 @@ namespace SupplierRequestsApp.Presentation.Controllers;
 public class SuppliersPageController
 {
     public readonly ITableService<Supplier> Service = new TableService<Supplier>();
+    public ObservableCollection<Supplier> Suppliers { get; set; } = [];
 
     public SuppliersPageController()
     {
         UpdateTable();
     }
-
-    public ObservableCollection<Supplier> Suppliers { get; set; } = [];
 
     public void UpdateTable()
     {

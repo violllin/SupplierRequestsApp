@@ -99,7 +99,7 @@ public partial class EditStoragePage : ContentPage
     {
         if (sender is Button button && button.CommandParameter is Shelf shelf)
         {
-            string result = await DisplayPromptAsync("Редактирование полки",
+            var result = await DisplayPromptAsync("Редактирование полки",
                 "Введите новую вместимость:", 
                 "OK", "Отмена", 
                 initialValue: shelf.MaxCapacity.ToString(), 

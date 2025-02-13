@@ -4,6 +4,5 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SupplierRequestsApp.Presentation.Pages.Util.LoadingComponent">
     <ContentPage.Content>
-        
     </ContentPage.Content>
 </ContentPage>

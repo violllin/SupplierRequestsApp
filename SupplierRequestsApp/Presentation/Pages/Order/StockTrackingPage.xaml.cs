@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Presentation.Controllers;
 using SupplierRequestsApp.Util;
 
@@ -14,38 +15,67 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
             BindingContext = _controller;
         }
 
-        private async void OnOrderClicked(object sender, EventArgs e)
+        private async Task<(Domain.Models.Product Product, int quantity, Guid Id, string selectedSupplierName)> ShowNewOrderFields(bool isDeficitProduct = false, StockItem? stockItem = null)
         {
-            if (sender is not Button { BindingContext: StockItem selectedProduct }) return;
-
-            try
+            if (isDeficitProduct)
             {
-                var suppliers = _controller.LoadSuppliers(selectedProduct.Product.SuppliersId);
+                ArgumentNullException.ThrowIfNull(stockItem);
+                var suppliers = _controller.LoadSuppliers(stockItem.Product.SuppliersId);
 
                 var supplierNames = suppliers.Select(s => s.Name).ToArray();
                 var selectedSupplierName =
                     await DisplayActionSheet("Выберите поставщика", "Отмена", null, supplierNames);
                 var selectedSupplier = suppliers.FirstOrDefault(s => s.Name == selectedSupplierName);
 
-                if (selectedSupplier == null) return;
+                if (selectedSupplier == null) throw new SupplierNotFoundException("Не найден поставщик для продукта.");
 
                 var result = await DisplayPromptAsync("Заказ товара",
-                    $"Введите количество для {selectedProduct.Product.Name}:",
+                    $"Введите количество для {stockItem.Product.Name}:",
                     "OK", "Отмена", "Количество", keyboard: Keyboard.Numeric);
 
                 if (int.TryParse(result, out int quantity) && quantity > 0)
                 {
-                    _controller.AddProductToCart(selectedProduct.Product, quantity, selectedSupplier.Id, selectedSupplierName);
+                    return (stockItem.Product, quantity, selectedSupplier.Id, selectedSupplierName);
                 }
-                else
+            }
+            else
+            {
+                var nonDeficitProducts = _controller.LoadNonDeficitProducts();
+                var productNames = nonDeficitProducts.Select(p => p.Name).ToArray();
+                var selectedProductName = await DisplayActionSheet("Выберите товар", "Отмена", null, productNames);
+                var selectedProduct = nonDeficitProducts.FirstOrDefault(p => p.Name == selectedProductName);
+
+                if (selectedProduct == null) throw new ProductNotFoundException("Продукт не найден");
+
+                var suppliers = _controller.LoadSuppliers(selectedProduct.SuppliersId);
+                var supplierNames = suppliers.Select(s => s.Name).ToArray();
+                var selectedSupplierName = await DisplayActionSheet("Выберите поставщика", "Отмена", null, supplierNames);
+                var selectedSupplier = suppliers.FirstOrDefault(s => s.Name == selectedSupplierName);
+
+                if (selectedSupplier == null) throw new SupplierNotFoundException("Не найден поставщик для продукта.");
+
+                var result = await DisplayPromptAsync("Заказ товара", $"Введите количество для {selectedProduct.Name}:", "OK", "Отмена", "Количество", keyboard: Keyboard.Numeric);
+
+                if (int.TryParse(result, out int quantity) && quantity > 0)
                 {
-                    await DisplayAlert("Ошибка", "Введите корректное количество!", "ОК");
+                    return (selectedProduct, quantity, selectedSupplier.Id, selectedSupplierName);
                 }
+            }
+            throw new InvalidOperationException("Введите корректное количество!");
+        }
+        
+        private async void OnOrderClicked(object sender, EventArgs e)
+        {
+            if (sender is not Button { BindingContext: StockItem stockItem }) return;
+            try
+            {
+                var (product, quantity, supplierId, supplierName) = await ShowNewOrderFields(true, stockItem);
+                _controller.AddProductToCart(product, quantity, supplierId, supplierName);
             }
             catch (SupplierNotFoundException exception)
             {
                 Debug.WriteLine($"Cannot add product to cart. Caused by: {exception.Message}\n{exception.StackTrace}");
-                await DisplayAlert("Ошибка", exception.Message, "ОК");
+                await DisplayAlert("Ошибка при добавление продукта в корзину", exception.Message, "ОК");
             }
         }
 
@@ -93,30 +123,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
         
         private async void OnAddNonDeficitProductToCart_Clicked(object? sender, EventArgs e)
         {
-            var nonDeficitProducts = _controller.LoadNonDeficitProducts();
-            var productNames = nonDeficitProducts.Select(p => p.Name).ToArray();
-            var selectedProductName = await DisplayActionSheet("Выберите товар", "Отмена", null, productNames);
-            var selectedProduct = nonDeficitProducts.FirstOrDefault(p => p.Name == selectedProductName);
-
-            if (selectedProduct == null) return;
-
-            var suppliers = _controller.LoadSuppliers(selectedProduct.SuppliersId);
-            var supplierNames = suppliers.Select(s => s.Name).ToArray();
-            var selectedSupplierName = await DisplayActionSheet("Выберите поставщика", "Отмена", null, supplierNames);
-            var selectedSupplier = suppliers.FirstOrDefault(s => s.Name == selectedSupplierName);
-
-            if (selectedSupplier == null) return;
-
-            var result = await DisplayPromptAsync("Заказ товара", $"Введите количество для {selectedProduct.Name}:", "OK", "Отмена", "Количество", keyboard: Keyboard.Numeric);
-
-            if (int.TryParse(result, out int quantity) && quantity > 0)
-            {
-                _controller.AddProductToCart(selectedProduct, quantity, selectedSupplier.Id, selectedSupplierName);
-            }
-            else
-            {
-                await DisplayAlert("Ошибка", "Введите корректное количество!", "ОК");
-            }
+            var (product, quantity, supplierId, supplierName) = await ShowNewOrderFields();
+            _controller.AddProductToCart(product, quantity, supplierId, supplierName);
         }
     }
 }

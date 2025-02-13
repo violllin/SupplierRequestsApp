@@ -11,10 +11,6 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
         public EditSupplierComponent(SuppliersPageController controller) : this(controller, null)
         {
         }
-        private async void OnBackClicked(object sender, EventArgs e)
-        {
-            await Navigation.PopModalAsync();
-        }
 
         public EditSupplierComponent(SuppliersPageController controller, Domain.Models.Supplier supplier)
         {
@@ -23,7 +19,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
             _supplier = supplier;
             if (_supplier != null)
             {
-                TitleLabel.Text = "Редактировать поставщика";
+                Title = "Редактировать поставщика";
                 NameEntry.Text = _supplier.Name;
                 AddressEntry.Text = _supplier.Address;
                 PhoneEntry.Text = _supplier.Phone;
@@ -57,7 +53,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
                     _supplier.Phone = PhoneEntry.Text.Trim();
                     _controller.EditItem(_supplier);
                 }
-                await Navigation.PopModalAsync();
+                await Navigation.PopAsync();
             }
             catch (Exception ex)
             {

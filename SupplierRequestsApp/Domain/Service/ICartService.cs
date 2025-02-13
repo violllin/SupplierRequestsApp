@@ -9,6 +9,5 @@ public interface ICartService
     void DropCart();
     List<OrderItem> GetCart();
     List<Order> GetOrders();
-
     void PlaceOrder();
 }

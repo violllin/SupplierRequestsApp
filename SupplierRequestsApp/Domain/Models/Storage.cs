@@ -24,13 +24,4 @@ public class Storage
         get => _shelves;
         set => _shelves = value;
     }
-
-}
-
-
-public class StoredProduct
-{
-    public Guid ProductId { get; set; }
-    public string ProductName { get; set; }
-    public int Quantity { get; set; }
 }

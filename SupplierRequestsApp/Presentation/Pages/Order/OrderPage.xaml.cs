@@ -34,17 +34,30 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
             DateCreatedEntry.Text = Order.DateCreated.ToString("g");
             SupplierIdEntry.Text = Order.SupplierId.ToString();
 
-            DeliveryStatusPicker.IsEnabled = false;
             DeliveryStatusPicker.ItemsSource = Enum.GetValues(typeof(DeliveryStatus));
-            DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
-
-            PayButton.IsEnabled = Order.PayStatus != PayStatus.Paid;
-            ReceiveButton.IsEnabled = Order.DeliveryStatus != DeliveryStatus.Received;
-            PayStatusPicker.IsEnabled = false;
             PayStatusPicker.ItemsSource = Enum.GetValues(typeof(PayStatus));
-            PayStatusPicker.SelectedItem = Order.PayStatus;
             
+            PayStatusPicker.IsEnabled = false;
+            DeliveryStatusPicker.IsEnabled = false;
+            
+            SetPayStatus(Order.PayStatus, Order.PayStatus != PayStatus.Paid);
+            SetDeliveryStatus(Order.DeliveryStatus, Order.DeliveryStatus != DeliveryStatus.Received);
+
             OrderProductsList.ItemsSource = OrderItems;
+        }
+        
+        private void SetPayStatus(PayStatus payStatus, bool isButtonEnabled = true)
+        {
+            Order.PayStatus = payStatus;
+            PayStatusPicker.SelectedItem = Order.PayStatus;
+            PayButton.IsEnabled = isButtonEnabled;
+        }
+
+        private void SetDeliveryStatus(DeliveryStatus deliveryStatus, bool isButtonEnabled = true)
+        {
+            Order.DeliveryStatus = deliveryStatus;
+            DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
+            ReceiveButton.IsEnabled = isButtonEnabled;
         }
 
         private async void PayButton_Clicked(object sender, EventArgs e)
@@ -54,9 +67,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
                 try
                 {
                     _controller.PayOrder(Order);
-                    Order.PayStatus = PayStatus.Paid;
-                    PayStatusPicker.SelectedItem = Order.PayStatus;
-                    PayButton.IsEnabled = false;
+                    SetPayStatus(PayStatus.Paid, false);
+                    SetDeliveryStatus(DeliveryStatus.InDelivery);
                 }
                 catch (Exception exception)
                 {
@@ -73,9 +85,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
                 try
                 {
                     _controller.ReceiveOrder(Order);
-                    Order.DeliveryStatus = DeliveryStatus.Received;
-                    DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
-                    ReceiveButton.IsEnabled = false;
+                    SetDeliveryStatus(DeliveryStatus.Received, false);
                 }
                 catch (Exception exception)
                 {
@@ -89,10 +99,8 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
         private void RefundButton_Clicked(object sender, EventArgs e)
         {
             _controller.RefundOrder(Order);
-            Order.PayStatus = PayStatus.Refund;
-            Order.DeliveryStatus = DeliveryStatus.Refund;
-            PayStatusPicker.SelectedItem = Order.PayStatus;
-            DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
+            SetPayStatus(PayStatus.Refund);
+            SetDeliveryStatus(DeliveryStatus.Refund);
         }
     }
 }

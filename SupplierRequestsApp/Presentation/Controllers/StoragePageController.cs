@@ -10,13 +10,12 @@ public class StoragePageController
 {
     public readonly ITableService<Storage> Service = new TableService<Storage>();
     private readonly IStorage<Shelf> _shelfService = new LocalStorageService<Shelf>();
+    public ObservableCollection<Storage> Storages { get; set; } = [];
 
     public StoragePageController()
     {
         UpdateTable();
     }
-
-    public ObservableCollection<Storage> Storages { get; set; } = [];
 
     public void UpdateTable()
     {
@@ -58,16 +57,7 @@ public class StoragePageController
     
     public List<Shelf> GetShelves(Guid storageId)
     {
-        try
-        {
-            return _shelfService.LoadEntities().Where(shelf => shelf.StorageId == storageId).ToList();
-        }
-        catch (DirectoryNotFoundException e)
-        {
-            Debug.WriteLine($"No shelves found for storage with id {storageId}. Exception message: {e.Message}");
-        }
-
-        return [];
+        return _shelfService.LoadEntities().Where(shelf => shelf.StorageId == storageId).ToList();
     }
 
     public void UpdateShelf(Shelf shelf)

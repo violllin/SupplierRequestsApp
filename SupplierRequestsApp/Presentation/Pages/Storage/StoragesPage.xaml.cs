@@ -34,7 +34,7 @@ public partial class StoragesPage : ContentPage
         var storage = (Domain.Models.Storage?) button.CommandParameter;
         try
         {
-            await Navigation.PushAsync(new  EditStoragePage(_controller, storage));
+            await Navigation.PushAsync(new EditStoragePage(_controller, storage));
         }
         catch (Exception exception)
         {
@@ -65,25 +65,5 @@ public partial class StoragesPage : ContentPage
         {
             button.IsEnabled = true;
         }
-    }
-    
-    private async Task<Dictionary<Guid, int>> DisplayProductSelectionDialog(ObservableCollection<Domain.Models.Product> allProducts)
-    {
-        var selectedProducts = new Dictionary<Guid, int>();
-        var productSelections = new Dictionary<Domain.Models.Product, bool>();
-
-        foreach (var product in allProducts)
-            productSelections[product] = false;
-
-        string result = await DisplayActionSheet("Выберите продукты:", "Отмена", "Добавить", allProducts.Select(p => p.Name).ToArray());
-
-        if (result != "Добавить" && result != "Отмена")
-        {
-            var selectedProduct = allProducts.FirstOrDefault(p => p.Name == result);
-            if (selectedProduct != null)
-                selectedProducts.Add(selectedProduct.Id, new Random().Next(1, 100));
-        }
-
-        return selectedProducts;
     }
 }

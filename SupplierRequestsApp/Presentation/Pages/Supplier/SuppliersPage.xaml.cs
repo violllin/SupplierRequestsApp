@@ -18,7 +18,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
         {
             try
             {
-                await Navigation.PushModalAsync(new EditSupplierComponent(_controller));
+                await Navigation.PushAsync(new EditSupplierComponent(_controller));
             }
             catch (Exception ex)
             {
@@ -34,7 +34,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Supplier
             if (supplier == null) return;
             try
             {
-                await Navigation.PushModalAsync(new EditSupplierComponent(_controller, supplier));
+                await Navigation.PushAsync(new EditSupplierComponent(_controller, supplier));
             }
             catch (Exception ex)
             {

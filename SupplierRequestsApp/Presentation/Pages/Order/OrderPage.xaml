@@ -60,7 +60,7 @@
 
             <Button x:Name="PayButton" Text="Оплатить" Clicked="PayButton_Clicked"/>
             <Button x:Name="ReceiveButton" Text="Получить" Clicked="ReceiveButton_Clicked"/>
-            <Button x:Name="RefundButton" Text="Вернуть" Clicked="RefundButton_Clicked"/>
+            <!-- <Button x:Name="RefundButton" Text="Вернуть" Clicked="RefundButton_Clicked"/> -->
 
         </VerticalStackLayout>
     </ScrollView>

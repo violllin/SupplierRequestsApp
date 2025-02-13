@@ -8,7 +8,6 @@ public class LocalDeliveryService : IDeliveryService
 {
 
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
-    private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
     private readonly IStorage<Shelf> _shelfService = new LocalStorageService<Shelf>();
 
     public void PayOrder(Order order)
