@@ -11,13 +11,13 @@ public class OrderItem
     private int _quantity;
 
 
-    public OrderItem(Guid id, Guid orderId, Guid supplierId, string supplierName, Guid productIdId, int quantity)
+    public OrderItem(Guid id, Guid orderId, Guid supplierId, string supplierName, Guid productId, int quantity)
     {
         Id = id;
         OrderId = orderId;
         SupplierId = supplierId;
         SupplierName = supplierName;
-        ProductId = productIdId;
+        ProductId = productId;
         Quantity = quantity;
     }
 

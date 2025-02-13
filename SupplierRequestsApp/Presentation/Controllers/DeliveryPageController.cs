@@ -33,20 +33,31 @@ public class DeliveryPageController
         UpdateTable(showAll);
     }
 
-    private List<Product> LoadProducts(Order order)
+    public List<OrderProduct> LoadProducts(Order order)
     {
-        return order.OrderProducts.Select(product => _productService.LoadEntity(product.ProductId.ToString()))
-            .OfType<Product>().ToList();
+        List<OrderProduct> list = [];
+        foreach (var item in order.OrderProducts)
+        {
+            var product = _productService.LoadEntity(item.ProductId.ToString());
+            if (product != null)
+                list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName, item.ProductId,
+                    item.Quantity, product.Name));
+        }
+        return list;
     }
-    
+
     private List<Order> GetOrders(bool showAll = false)
     {
         var entities = _orderService
-            .LoadEntities().OrderByDescending(order => order.PayStatus == PayStatus.NotPaid || order.DeliveryStatus != DeliveryStatus.Received).ThenByDescending(order => order.DateCreated);
+            .LoadEntities()
+            .OrderByDescending(order =>
+                order.PayStatus == PayStatus.NotPaid || order.DeliveryStatus != DeliveryStatus.Received)
+            .ThenByDescending(order => order.DateCreated);
         return showAll
-            ? entities.ToList() : 
-            entities.Where(order => order.PayStatus == PayStatus.NotPaid || order.DeliveryStatus != DeliveryStatus.Received)
-            .ToList();
+            ? entities.ToList()
+            : entities.Where(order =>
+                    order.PayStatus == PayStatus.NotPaid || order.DeliveryStatus != DeliveryStatus.Received)
+                .ToList();
     }
 
 
@@ -55,17 +66,16 @@ public class DeliveryPageController
         _deliveryService.PayOrder(order);
         ForceUpdateTable(false);
     }
-    
+
     public void RefundOrder(Order order)
     {
         _deliveryService.RefundOrder(order);
         ForceUpdateTable(false);
     }
-    
+
     public void ReceiveOrder(Order order)
     {
         _deliveryService.ReceiveOrder(order);
         ForceUpdateTable(false);
     }
-    
 }

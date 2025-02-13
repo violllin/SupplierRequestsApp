@@ -10,7 +10,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
     {
         public Domain.Models.Order Order { get; set; }
         private DeliveryPageController _controller;
-        public ObservableCollection<OrderItem> OrderItems { get; set; }
+        public ObservableCollection<OrderProduct> OrderItems { get; set; }
 
         public OrderPage(Domain.Models.Order order, DeliveryPageController controller)
         {
@@ -24,7 +24,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
         {
             Order = order;
             _controller = controller;
-            OrderItems = new ObservableCollection<OrderItem>(Order.OrderProducts);
+            OrderItems = new ObservableCollection<OrderProduct>(_controller.LoadProducts(order));
         }
 
         private void LoadOrderData()

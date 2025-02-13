@@ -14,7 +14,7 @@ public class StockTrackingPageController
     private readonly ICartService _cartService = new LocalCartService();
 
     public ObservableCollection<StockItem> DeficitProducts { get; set; } = [];
-    public ObservableCollection<OrderItem> CartProducts { get; set; } = [];
+    public ObservableCollection<OrderProduct> CartProducts { get; set; } = [];
 
     public StockTrackingPageController()
     {
@@ -26,7 +26,7 @@ public class StockTrackingPageController
         DeficitProducts.Clear();
         CartProducts.Clear();
 
-        var cartProducts = new ObservableCollection<OrderItem>(LoadCartProducts());
+        var cartProducts = new ObservableCollection<OrderProduct>(LoadCartProducts());
         foreach (var cartProduct in cartProducts)
         {
             CartProducts.Add(cartProduct);
@@ -51,7 +51,7 @@ public class StockTrackingPageController
         }
     }
 
-    private List<OrderItem> LoadCartProducts()
+    private List<OrderProduct> LoadCartProducts()
     {
         return _cartService.GetCart();
     }
@@ -106,7 +106,8 @@ public class StockTrackingPageController
     {
         var orderItem = _cartService.AddProduct(product, quantity, supplierId, supplierName);
         DeficitProducts.Remove(DeficitProducts.FirstOrDefault(si => si.Product == product)!);
-        CartProducts.Add(orderItem);
+        CartProducts.Add(new OrderProduct(orderItem.Id, orderItem.OrderId, orderItem.SupplierId, orderItem.SupplierName,
+            orderItem.ProductId, orderItem.Quantity, product.Name));
     }
 
     public void DropItemFromCart(OrderItem orderItem)

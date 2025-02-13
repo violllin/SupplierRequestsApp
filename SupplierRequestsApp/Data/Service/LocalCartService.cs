@@ -11,6 +11,7 @@ public class LocalCartService : ICartService
     private List<Order>? _orders;
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
     private readonly IStorage<OrderItem> _orderItemService = new LocalStorageService<OrderItem>();
+    private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
 
     public LocalCartService()
     {
@@ -48,6 +49,13 @@ public class LocalCartService : ICartService
     
     private Order CreateDraftOrder(Guid supplierId)
     {
+        var loadedOrder = _orderService.LoadEntities()
+            .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.Created || order.DeliveryStatus == DeliveryStatus.NotCreated);
+        if (loadedOrder != null)
+        {
+            _order = loadedOrder;
+            return _order;
+        }
         var order = new Order(Guid.NewGuid(), DateTime.Now, supplierId, new List<OrderItem>(),
             DeliveryStatus.NotCreated, PayStatus.NotPaid);
         _orderService.SaveEntity(order);
@@ -56,7 +64,7 @@ public class LocalCartService : ICartService
 
     private OrderItem CreateOrderItem(Guid orderId, Product product, Guid supplierId, int quantity, string supplierName)
     {
-        var newOrderItem = new OrderItem(id: Guid.NewGuid(), orderId: orderId, productIdId: product.Id,
+        var newOrderItem = new OrderItem(id: Guid.NewGuid(), orderId: orderId, productId: product.Id,
             supplierId: supplierId, quantity: quantity, supplierName: supplierName);
         _orderItemService.SaveEntity(newOrderItem);
         return newOrderItem;
@@ -96,11 +104,20 @@ public class LocalCartService : ICartService
         }
         _order.ClearOrderProducts();
         _orderService.SaveEntity(_order);
+        _order = null;
     }
 
-    public List<OrderItem> GetCart()
+    public List<OrderProduct> GetCart()
     {
-        return _order?.OrderProducts ?? [];
+        List<OrderProduct> list = [];
+        if (_order == null) return list;
+        foreach (var item in _order.OrderProducts)
+        {
+            var product = _productService.LoadEntity(item.ProductId.ToString());
+            if (product != null) list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName,
+                item.ProductId, item.Quantity, product.Name));
+        }
+        return list;
     }
 
     public List<Order> GetOrders()
