@@ -69,5 +69,10 @@ public class StoragePageController
 
         return [];
     }
+
+    public void UpdateShelf(Shelf shelf)
+    {
+        _shelfService.UpdateEntity(shelf);
+    }
     
 }

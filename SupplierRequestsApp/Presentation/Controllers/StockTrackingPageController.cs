@@ -60,29 +60,43 @@ public class StockTrackingPageController
     {
         return _cartService.GetOrders();
     }
-    
+
     private List<StockItem> LoadStockDeficitProducts()
     {
         var shelves = _productsPageController.LoadShelves(_productsPageController.LoadStorages());
         var stockItems = new List<StockItem>();
 
+        var orders = LoadOrders();
+        var undeliveredOrderProducts = orders
+            .Where(order => order.DeliveryStatus != DeliveryStatus.Received)
+            .SelectMany(order => order.OrderProducts)
+            .Select(item => item.Product.Id)
+            .ToHashSet();
+
         foreach (var shelf in shelves)
         {
-            foreach (var slot in shelf.Slots.Where(s => s.Value.HasValue))
+            foreach (var slot in shelf.Slots)
             {
-                var product = _productService.LoadEntity(slot.Value.ToString()!);
-                if (product == null) continue;
+                if (!slot.Value.HasValue) continue;
 
-                var existingItem = stockItems.FirstOrDefault(item => item.Product == product);
-                if (existingItem != null)
-                {
-                    existingItem.Quantity++;
-                }
-                else
-                {
-                    stockItems.Add(new StockItem(product, 1251));
-                }
+                var product = _productService.LoadEntity(slot.Value.ToString()!);
+                if (product == null || undeliveredOrderProducts.Contains(product.Id)) continue;
+
+                var item = stockItems.FirstOrDefault(item => item.Product.Id == product.Id);
+                if (item != null) continue;
+
+                var productCount = shelf.Slots.Count(s => s.Value == product.Id);
+                if (productCount < 15) stockItems.Add(new StockItem(product, productCount));
             }
+        }
+
+        var allProducts = _productService.LoadEntities();
+        foreach (var product in allProducts)
+        {
+            if (stockItems.Any(item => item.Product.Id == product.Id) || undeliveredOrderProducts.Contains(product.Id)) continue;
+
+            var productCount = shelves.Sum(shelf => shelf.Slots.Count(slot => slot.Value == product.Id));
+            if (productCount == 0) stockItems.Add(new StockItem(product, productCount));
         }
 
         return stockItems;
@@ -94,7 +108,7 @@ public class StockTrackingPageController
         DeficitProducts.Remove(DeficitProducts.FirstOrDefault(si => si.Product == product)!);
         CartProducts.Add(orderItem);
     }
-    
+
     public void DropItemFromCart(OrderItem orderItem)
     {
         _cartService.DropItem(orderItem: orderItem);

@@ -122,19 +122,11 @@ namespace SupplierRequestsApp.Presentation.Pages.Product
             }
             else
             {
-                try
+                if (_controller.LoadProducts()
+                        .Where(product => product.Name == name).ToList().Count != 0)
                 {
-                    if (_controller.LoadProducts()
-                            .Where(product => product.Name == name).ToList().Count != 0)
-                    {
-                        await DisplayAlert("Ошибка сохранения", $"Продукт с названием {name} уже существует", "ОК");
-                        return;
-                    }
-                }
-                catch (DirectoryNotFoundException exception)
-                {
-                    Debug.WriteLine(
-                        $"Products directory not exist, there is no names containing product, continue. Exception message: {exception.Message}");
+                    await DisplayAlert("Ошибка сохранения", $"Продукт с названием {name} уже существует", "ОК");
+                    return;
                 }
                 try
                 {
@@ -153,11 +145,6 @@ namespace SupplierRequestsApp.Presentation.Pages.Product
                     await DisplayAlert("Ошибка сохранения", exception.Message, "ОК");
                 }
             }
-        }
-
-        private async void OnBackClicked(object sender, EventArgs e)
-        {
-            await Navigation.PopModalAsync();
         }
     }
 }

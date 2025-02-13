@@ -17,34 +17,48 @@ public class DeliveryPageController
         UpdateTable();
     }
 
-    private void UpdateTable()
+    private void UpdateTable(bool showAll = false)
     {
-        var orders = new ObservableCollection<Order>(GetOrders());
+        var orders = new ObservableCollection<Order>(GetOrders(showAll));
         Orders.Clear();
         foreach (var order in orders)
         {
             Orders.Add(order);
         }
     }
-    
-    private List<Order> GetOrders()
+
+    public void ForceUpdateTable(bool showAll)
     {
-        return _orderService.LoadEntities().ToList();
+        UpdateTable(showAll);
     }
+    
+    private List<Order> GetOrders(bool showAll = false)
+    {
+        var entities = _orderService
+            .LoadEntities().OrderByDescending(order => order.PayStatus == PayStatus.NotPaid || order.DeliveryStatus != DeliveryStatus.Received).ThenByDescending(order => order.DateCreated);
+        return showAll
+            ? entities.ToList() : 
+            entities.Where(order => order.PayStatus == PayStatus.NotPaid || order.DeliveryStatus != DeliveryStatus.Received)
+            .ToList();
+    }
+
 
     public void PayOrder(Order order)
     {
         _deliveryService.PayOrder(order);
+        ForceUpdateTable(false);
     }
     
     public void RefundOrder(Order order)
     {
         _deliveryService.RefundOrder(order);
+        ForceUpdateTable(false);
     }
     
     public void ReceiveOrder(Order order)
     {
         _deliveryService.ReceiveOrder(order);
+        ForceUpdateTable(false);
     }
     
 }

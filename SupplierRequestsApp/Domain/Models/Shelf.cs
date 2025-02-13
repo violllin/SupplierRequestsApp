@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using SupplierRequestsApp.Data;
 using SupplierRequestsApp.Util;
 
@@ -16,12 +17,41 @@ public class Shelf
         _maxCapacity = Validator.RequireGreaterThan(maxCapacity, 0);
         _slots = slots ?? new Dictionary<int, Guid?>();
         _storageId = storageId;
-        for (int i = _slots.Count; i < _maxCapacity; i++)
+        FillSlots();
+    }
+
+    private void FillSlots()
+    {
+        for (var i = _slots.Count; i < _maxCapacity; i++)
         {
             _slots[i] = null;
         }
     }
+    
+    private void CutSlots()
+    {
+        for (var i = _slots.Count - 1; i >= _maxCapacity; i--)
+        {
+            _slots.Remove(i);
+        }
+    }
 
+    public Task SetMaxCapacity(int capacity)
+    {
+        if (_maxCapacity >= capacity)
+        {
+            MaxCapacity = capacity;
+            CutSlots();
+        }
+        else
+        {
+            MaxCapacity = capacity;
+            FillSlots();
+        }
+
+        return Task.CompletedTask;
+    }
+    
     public Guid Id
     {
         get => _id;
@@ -33,8 +63,8 @@ public class Shelf
         get => _maxCapacity;
         set
         {
-            if (value < _slots.Count)
-                throw new InvalidCapacityValueException("Нельзя уменьшить MaxCapacity меньше текущего количества слотов.");
+            if (value < FreeSlots)
+                throw new InvalidCapacityValueException("Нельзя установить размер полки меньше, чем в ней находится товаров.");
             _maxCapacity = Validator.RequireGreaterThan(value, 0);
         }
     }
@@ -67,12 +97,17 @@ public class Shelf
 
     public void RemoveProduct(Guid productId)
     {
-        foreach (var slot in _slots.Where(slot => slot.Value == productId))
+        var found = false;
+
+        foreach (var slotKey in _slots.Keys.Where(k => _slots[k] == productId).ToList())
         {
-            _slots[slot.Key] = null;
-            return;
+            _slots[slotKey] = null;
+            found = true;
         }
 
-        throw new NoMatchingItemOnShelf($"Такого товара нет на этой полке. ShelfId: {_id}, ProductId: {productId}");
+        if (!found)
+        {
+            throw new NoMatchingItemOnShelf($"Такого товара нет на этой полке. ShelfId: {_id}, ProductId: {productId}");
+        }
     }
 }

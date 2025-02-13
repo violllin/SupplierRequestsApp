@@ -18,12 +18,15 @@
                     <ColumnDefinition Width="30" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Text="№" FontAttributes="Bold"/>
                 <Label Grid.Column="1" Text="ID Полки" FontAttributes="Bold"/>
                 <Label Grid.Column="2" Text="Вместимость" FontAttributes="Bold"/>
-                <Label Grid.Column="3" Text="Действия"/>
+                <Label Grid.Column="3" Text="Свободно ячеек" FontAttributes="Bold"/>
+                <Label Grid.Column="4" Text="Действия"/>
             </Grid>
 
             <CollectionView x:Name="ShelvesCollectionView">
@@ -34,18 +37,30 @@
                                 <ColumnDefinition Width="30" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Text="{Binding Index}" VerticalOptions="Center"/>
                             <Label Grid.Column="1" Text="{Binding Shelf.Id}" VerticalOptions="Center"/>
                             <Label Grid.Column="2" Text="{Binding Shelf.MaxCapacity}" VerticalOptions="Center"/>
-                            <Button Grid.Column="3" Text="X" 
-                                    BackgroundColor="DarkRed" 
-                                    TextColor="White" 
-                                    Clicked="OnRemoveShelfClicked" 
-                                    CommandParameter="{Binding Shelf}"
-                                    VerticalOptions="Center" 
-                                    HorizontalOptions="Center"/>
+                            <Label Grid.Column="3" Text="{Binding Shelf.FreeSlots}" VerticalOptions="Center"/>
+                            
+                            <StackLayout Grid.Column="4" Orientation="Horizontal" Spacing="5">
+                                <Button  Text="✏️"
+                                        Clicked="OnEditShelfClicked"
+                                        CommandParameter="{Binding Shelf}"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"/>
+                            
+                                <Button Text="X" 
+                                        BackgroundColor="DarkRed" 
+                                        TextColor="White" 
+                                        Clicked="OnRemoveShelfClicked" 
+                                        CommandParameter="{Binding Shelf}"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"/>
+                            </StackLayout>
+                            
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Presentation.Controllers;
+using SupplierRequestsApp.Util;
 
 namespace SupplierRequestsApp.Presentation.Pages.Order
 {
@@ -32,35 +34,61 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
             DateCreatedEntry.Text = Order.DateCreated.ToString("g");
             SupplierIdEntry.Text = Order.SupplierId.ToString();
 
+            DeliveryStatusPicker.IsEnabled = false;
             DeliveryStatusPicker.ItemsSource = Enum.GetValues(typeof(DeliveryStatus));
             DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
 
+            PayButton.IsEnabled = Order.PayStatus != PayStatus.Paid;
+            ReceiveButton.IsEnabled = Order.DeliveryStatus != DeliveryStatus.Received;
+            PayStatusPicker.IsEnabled = false;
             PayStatusPicker.ItemsSource = Enum.GetValues(typeof(PayStatus));
             PayStatusPicker.SelectedItem = Order.PayStatus;
-
+            
             OrderProductsList.ItemsSource = OrderItems;
         }
 
-        private void PayButton_Clicked(object sender, EventArgs e)
+        private async void PayButton_Clicked(object sender, EventArgs e)
         {
-            if (sender is not Button { BindingContext: Domain.Models.Order order }) return;
-            _controller.PayOrder(order);
-            Order.PayStatus = PayStatus.Paid;
-            PayStatusPicker.SelectedItem = Order.PayStatus;
+            await Loading.RunWithLoading(Navigation, async () =>
+            {
+                try
+                {
+                    _controller.PayOrder(Order);
+                    Order.PayStatus = PayStatus.Paid;
+                    PayStatusPicker.SelectedItem = Order.PayStatus;
+                    PayButton.IsEnabled = false;
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine($"Error while pay order. Caused by: {exception.Message}\n{exception.StackTrace}");
+                    await DisplayAlert("Не удалось оплатить заказ.", exception.Message, "OK");
+                }
+            });
         }
 
-        private void ReceiveButton_Clicked(object sender, EventArgs e)
+        private async void ReceiveButton_Clicked(object sender, EventArgs e)
         {
-            if (sender is not Button { BindingContext: Domain.Models.Order order }) return;
-            _controller.ReceiveOrder(order);
-            Order.DeliveryStatus = DeliveryStatus.Received;
-            DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
+            await Loading.RunWithLoading(Navigation, async () =>
+            {
+                try
+                {
+                    _controller.ReceiveOrder(Order);
+                    Order.DeliveryStatus = DeliveryStatus.Received;
+                    DeliveryStatusPicker.SelectedItem = Order.DeliveryStatus;
+                    ReceiveButton.IsEnabled = false;
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine($"Error while receiving order. Caused by: {exception.Message}\n{exception.StackTrace}");
+                    await DisplayAlert("Не удалось получить заказ.", exception.Message, "OK");
+                }
+            });
+            
         }
 
         private void RefundButton_Clicked(object sender, EventArgs e)
         {
-            if (sender is not Button { BindingContext: Domain.Models.Order order }) return;
-            _controller.RefundOrder(order);
+            _controller.RefundOrder(Order);
             Order.PayStatus = PayStatus.Refund;
             Order.DeliveryStatus = DeliveryStatus.Refund;
             PayStatusPicker.SelectedItem = Order.PayStatus;

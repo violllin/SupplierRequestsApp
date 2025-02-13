@@ -47,12 +47,12 @@ public class LocalDeliveryService : IDeliveryService
         foreach (var orderItem in order.OrderProducts)
         {
             var shelf = _shelfService.LoadEntity(orderItem.Product.ShelfId.ToString());
-            if (!shelf!.CanStore(orderItem.Quantity)) throw new NoFreeSpaceForItemException("Нет места на полке чтобы положить товар.");
+            if (!shelf!.CanStore(orderItem.Quantity)) throw new NoFreeSpaceForItemException("Нет места на полке.");
             for (var i = 0; i < orderItem.Quantity; i++)
             {
                 shelf.StoreProduct(orderItem.Product.Id);
-                _shelfService.UpdateEntity(shelf);
             }
+            _shelfService.UpdateEntity(shelf);
         }
     }
 }

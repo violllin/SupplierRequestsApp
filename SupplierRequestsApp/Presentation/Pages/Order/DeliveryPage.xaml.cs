@@ -7,6 +7,7 @@ public partial class DeliveryPage : ContentPage
 {
 
     private readonly DeliveryPageController _controller = new();
+    private bool _isArchiveShown = false;
     public DeliveryPage()
     {
         InitializeComponent();
@@ -25,5 +26,12 @@ public partial class DeliveryPage : ContentPage
             Debug.WriteLine($"Error while open Order page. Caused by: {exception.Message}\n{exception.StackTrace}");
             await DisplayAlert("Не удалось открыть страницу заказа.", exception.Message, "OK");
         }
+    }
+
+    private void OnShowCompletedOrdersClicked(object? sender, EventArgs e)
+    {
+        _isArchiveShown = !_isArchiveShown;
+        _controller.ForceUpdateTable(_isArchiveShown);
+        ShowArchivedOrdersButton.Text = _isArchiveShown ? "Скрыть завершенные заказы" : "Показать завершенные заказы";
     }
 }

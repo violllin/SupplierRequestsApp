@@ -62,10 +62,6 @@ public class ProductsPageController
 
     public void AddItem(Product product)
     {
-        var shelf = _shelfService.LoadEntity(product.ShelfId.ToString());
-        if (shelf == null) throw new ShelfNotFoundException("Полка с таким ID не найдена.");
-        shelf.StoreProduct(product.Id);
-        _shelfService.UpdateEntity(shelf);
         foreach (var loadedSupplier in product.SuppliersId.Select(supplier => _supplierService.LoadEntity(supplier.ToString())))
         {
             if (loadedSupplier == null) throw new SupplierNotFoundException("Поставщик с таким ID не найден.");
@@ -114,10 +110,6 @@ public class ProductsPageController
         {
             Debug.WriteLine($"Error while removing product from shelf: {e.Message}");
         }
-        var newShelf =_shelfService.LoadEntity(product.ShelfId.ToString());
-        if (newShelf == null) throw new ShelfNotFoundException("Полка с таким ID не найдена.");
-        newShelf.StoreProduct(product.Id);
-        _shelfService.UpdateEntity(newShelf);
         foreach (var supplier in product.PreviosSuppliersId.Select(prevSupplier => _supplierService.LoadEntity(prevSupplier.ToString())))
         {
             supplier?.Products.Remove(product.Id);

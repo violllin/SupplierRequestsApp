@@ -5,7 +5,6 @@
              x:Class="SupplierRequestsApp.Presentation.Pages.Product.EditProductComponent">
     <ContentPage.Content>
         <VerticalStackLayout Padding="20" Spacing="15">
-            <Button Text="Назад" Clicked="OnBackClicked" HorizontalOptions="Start" />
             <Label x:Name="TitleLabel" Text="Создание товара" FontAttributes="Bold" FontSize="20"
                    HorizontalOptions="Center" />
             <Label Text="Название" FontAttributes="Bold" />

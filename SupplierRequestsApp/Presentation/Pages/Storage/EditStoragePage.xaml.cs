@@ -1,10 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using SupplierRequestsApp.Data.Service;
 using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Presentation.Controllers;
-using Microsoft.Maui.Controls;
 using SupplierRequestsApp.Util;
 
 namespace SupplierRequestsApp.Presentation.Pages.Storage;
@@ -52,8 +49,8 @@ public partial class EditStoragePage : ContentPage
         await Loading.RunWithLoading(Navigation, () =>
         {
             var newShelf = new Shelf(Guid.NewGuid(), maxCapacity, _storage.Id);
-            _storage.Shelves.Add(newShelf.Id);
             _controller.AddShelf(newShelf);
+            _storage.Shelves.Add(newShelf.Id);
             UpdateShelfDisplayList();
             ShelfCapacityEntry.Text = string.Empty;
             return Task.CompletedTask;
@@ -97,4 +94,36 @@ public partial class EditStoragePage : ContentPage
             _controller.UpdateTable();
         }
     }
+
+    private async void OnEditShelfClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is Shelf shelf)
+        {
+            string result = await DisplayPromptAsync("Редактирование полки",
+                "Введите новую вместимость:", 
+                "OK", "Отмена", 
+                initialValue: shelf.MaxCapacity.ToString(), 
+                keyboard: Keyboard.Numeric);
+
+            if (int.TryParse(result, out int newCapacity) && newCapacity > 0)
+            {
+                try
+                {
+                    await shelf.SetMaxCapacity(newCapacity);
+                    _controller.UpdateShelf(shelf);
+                    UpdateShelfDisplayList();
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception);
+                }
+                
+            }
+            else
+            {
+                await DisplayAlert("Ошибка", "Введите корректное число!", "OK");
+            }
+        }
+    }
+
 }
