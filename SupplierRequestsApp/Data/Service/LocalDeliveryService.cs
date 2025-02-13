@@ -9,6 +9,7 @@ public class LocalDeliveryService : IDeliveryService
 
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
     private readonly IStorage<Shelf> _shelfService = new LocalStorageService<Shelf>();
+    private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
 
     public void PayOrder(Order order)
     {
@@ -45,11 +46,13 @@ public class LocalDeliveryService : IDeliveryService
     {
         foreach (var orderItem in order.OrderProducts)
         {
-            var shelf = _shelfService.LoadEntity(orderItem.Product.ShelfId.ToString());
+            var orderProduct = _productService.LoadEntity(orderItem.ProductId.ToString());
+            if (orderProduct == null) continue;
+            var shelf = _shelfService.LoadEntity(orderProduct.ShelfId.ToString());
             if (!shelf!.CanStore(orderItem.Quantity)) throw new NoFreeSpaceForItemException("Нет места на полке.");
             for (var i = 0; i < orderItem.Quantity; i++)
             {
-                shelf.StoreProduct(orderItem.Product.Id);
+                shelf.StoreProduct(orderItem.ProductId);
             }
             _shelfService.UpdateEntity(shelf);
         }

@@ -36,7 +36,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Label Text="{Binding Product.Name}" Grid.Column="0" VerticalOptions="Center"/>
+                                    <Label Text="{Binding Product.Id}" Grid.Column="0" VerticalOptions="Center"/>
                                     <Label Text="{Binding Quantity}" Grid.Column="1" VerticalOptions="Center" TextColor="LightCoral"/>
                                     <Button Text="Заказать" Grid.Column="2" HorizontalOptions="End" Clicked="OnOrderClicked"/>
                                 </Grid>
@@ -77,10 +77,10 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <Label Text="{Binding Product.Name}" Grid.Column="0" VerticalOptions="Center"/>
+                                <Label Text="{Binding ProductId}" Grid.Column="0" VerticalOptions="Center"/>
                                 <Label Text="{Binding SupplierName}" Grid.Column="1" VerticalOptions="Center"/>
                                 <Label Text="{Binding Quantity}" Grid.Column="2" VerticalOptions="Center"/>
-                                <Button Text="🗑️" Grid.Column="3" BackgroundColor="Red" TextColor="White"
+                                <Button Text="🗑️" Grid.Column="3" BackgroundColor="DarkRed" TextColor="White"
                                         Clicked="OnRemoveFromCartClicked" CommandParameter="{Binding .}"/>
                             </Grid>
                         </DataTemplate>

@@ -7,18 +7,18 @@ public class OrderItem
     private Guid _orderId;
     private Guid _supplierId;
     private string _supplierName;
-    private Product _product;
+    private Guid _productId;
     private int _quantity;
 
 
-    public OrderItem(Guid id, Guid orderId, Guid supplierId, string supplierName, Product product, int quantity)
+    public OrderItem(Guid id, Guid orderId, Guid supplierId, string supplierName, Guid productIdId, int quantity)
     {
-        _id = id;
-        _orderId = orderId;
-        _supplierId = supplierId;
-        _supplierName = supplierName;
-        _product = product;
-        _quantity = quantity;
+        Id = id;
+        OrderId = orderId;
+        SupplierId = supplierId;
+        SupplierName = supplierName;
+        ProductId = productIdId;
+        Quantity = quantity;
     }
 
     public Guid Id
@@ -39,10 +39,10 @@ public class OrderItem
         set => _supplierId = Validator.RequireGuid(value);
     }
 
-    public Product Product
+    public Guid ProductId
     {
-        get => _product;
-        set => _product = value ?? throw new ArgumentNullException(nameof(value));
+        get => _productId;
+        set => _productId = Validator.RequireGuid(value);
     }
 
     public int Quantity

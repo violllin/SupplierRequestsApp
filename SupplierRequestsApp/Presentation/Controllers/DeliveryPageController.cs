@@ -8,8 +8,9 @@ namespace SupplierRequestsApp.Presentation.Controllers;
 public class DeliveryPageController
 {
     private readonly IDeliveryService _deliveryService = new LocalDeliveryService();
-    public ObservableCollection<Order> Orders { get; set; } = [];
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
+    private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
+    public ObservableCollection<Order> Orders { get; set; } = [];
 
 
     public DeliveryPageController()
@@ -30,6 +31,12 @@ public class DeliveryPageController
     public void ForceUpdateTable(bool showAll)
     {
         UpdateTable(showAll);
+    }
+
+    private List<Product> LoadProducts(Order order)
+    {
+        return order.OrderProducts.Select(product => _productService.LoadEntity(product.ProductId.ToString()))
+            .OfType<Product>().ToList();
     }
     
     private List<Order> GetOrders(bool showAll = false)

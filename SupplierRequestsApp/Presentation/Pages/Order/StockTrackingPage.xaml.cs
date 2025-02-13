@@ -24,7 +24,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
 
                 var supplierNames = suppliers.Select(s => s.Name).ToArray();
                 var selectedSupplierName =
-                    await DisplayActionSheet("Выберите поставщика", "Отмена", null, supplierNames);
+                    await DisplayActionSheet("Выберите поставщика", "Отмена", "", supplierNames);
                 var selectedSupplier = suppliers.FirstOrDefault(s => s.Name == selectedSupplierName);
 
                 if (selectedSupplier == null) throw new SupplierNotFoundException("Не найден поставщик для продукта.");
@@ -49,7 +49,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
 
                 var suppliers = _controller.LoadSuppliers(selectedProduct.SuppliersId);
                 var supplierNames = suppliers.Select(s => s.Name).ToArray();
-                var selectedSupplierName = await DisplayActionSheet("Выберите поставщика", "Отмена", null, supplierNames);
+                var selectedSupplierName = await DisplayActionSheet("Выберите поставщика","Отмена", null, supplierNames);
                 var selectedSupplier = suppliers.FirstOrDefault(s => s.Name == selectedSupplierName);
 
                 if (selectedSupplier == null) throw new SupplierNotFoundException("Не найден поставщик для продукта.");

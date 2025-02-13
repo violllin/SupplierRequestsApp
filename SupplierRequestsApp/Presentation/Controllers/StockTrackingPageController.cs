@@ -37,12 +37,12 @@ public class StockTrackingPageController
         var activeOrderProducts = orders
             .Where(order => !excludedStatuses.Contains(order.DeliveryStatus))
             .SelectMany(order => order.OrderProducts)
-            .Select(item => item.Product.Id)
+            .Select(item => item.ProductId)
             .ToHashSet();
 
         var deficitProducts = new ObservableCollection<StockItem>(LoadStockDeficitProducts())
             .Where(dp => !activeOrderProducts.Contains(dp.Product.Id) &&
-                         CartProducts.All(cp => cp.Product.Id != dp.Product.Id))
+                         CartProducts.All(cp => cp.ProductId != dp.Product.Id))
             .ToList();
 
         foreach (var deficitProduct in deficitProducts)
@@ -70,7 +70,7 @@ public class StockTrackingPageController
         var undeliveredOrderProducts = orders
             .Where(order => order.DeliveryStatus != DeliveryStatus.Received)
             .SelectMany(order => order.OrderProducts)
-            .Select(item => item.Product.Id)
+            .Select(item => item.ProductId)
             .ToHashSet();
 
         foreach (var shelf in shelves)
@@ -139,7 +139,7 @@ public class StockTrackingPageController
     {
         var allProducts = _productService.LoadEntities();
         var deficitProductIds = DeficitProducts.Select(dp => dp.Product.Id).ToHashSet();
-        var cartProductIds = CartProducts.Select(cp => cp.Product.Id).ToHashSet();
+        var cartProductIds = CartProducts.Select(cp => cp.ProductId).ToHashSet();
         return allProducts.Where(product => !deficitProductIds.Contains(product.Id) && !cartProductIds.Contains(product.Id)).ToList();
     }
     

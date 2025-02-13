@@ -56,7 +56,7 @@ public class LocalCartService : ICartService
 
     private OrderItem CreateOrderItem(Guid orderId, Product product, Guid supplierId, int quantity, string supplierName)
     {
-        var newOrderItem = new OrderItem(id: Guid.NewGuid(), orderId: orderId, product: product,
+        var newOrderItem = new OrderItem(id: Guid.NewGuid(), orderId: orderId, productIdId: product.Id,
             supplierId: supplierId, quantity: quantity, supplierName: supplierName);
         _orderItemService.SaveEntity(newOrderItem);
         return newOrderItem;

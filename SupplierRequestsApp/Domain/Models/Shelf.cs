@@ -63,7 +63,7 @@ public class Shelf
         get => _maxCapacity;
         set
         {
-            if (value < FreeSlots)
+            if (value < MaxCapacity - FreeSlots)
                 throw new InvalidCapacityValueException("Нельзя установить размер полки меньше, чем в ней находится товаров.");
             _maxCapacity = Validator.RequireGreaterThan(value, 0);
         }
