@@ -1,0 +1,102 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Order.StockTrackingPage"
+             Title="Учет товаров">
+    <ContentPage.Content>
+        <Grid Padding="20" ColumnSpacing="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <VerticalStackLayout Grid.Column="0" Spacing="15">
+                <Button Text="Заказать отдельный товар" Clicked="OnAddNonDeficitProductToCart_Clicked" HorizontalOptions="Center"/>
+
+                <Grid Padding="5" BackgroundColor="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Text="Название" FontAttributes="Bold" Grid.Column="0" VerticalOptions="Center"/>
+                    <Label Text="Осталось на складе" FontAttributes="Bold" Grid.Column="1" VerticalOptions="Center"/>
+                    <Label Text="Действия" FontAttributes="Bold" Grid.Column="2" VerticalOptions="Center" HorizontalOptions="End"/>
+                </Grid>
+
+                <CollectionView ItemsSource="{Binding DeficitProducts}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Grid Padding="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Text="{Binding Product.Name}" Grid.Column="0" VerticalOptions="Center"/>
+                                    <Label Text="{Binding Quantity}" Grid.Column="1" VerticalOptions="Center" TextColor="LightCoral"/>
+                                    <Button Text="Заказать" Grid.Column="2" HorizontalOptions="End" Clicked="OnOrderClicked"/>
+                                </Grid>
+                                <BoxView HeightRequest="1" BackgroundColor="Gray" Grid.ColumnSpan="3" Margin="0,5,0,5"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+            <BoxView Grid.Column="1" WidthRequest="2" BackgroundColor="Gray" VerticalOptions="Fill"/>
+
+            <VerticalStackLayout Grid.Column="2" Spacing="15" Padding="10" BackgroundColor="Transparent">
+                <Label Text="Корзина" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                <Grid Padding="5" BackgroundColor="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Text="Название" FontAttributes="Bold" Grid.Column="0" VerticalOptions="Center"/>
+                    <Label Text="Поставщик" FontAttributes="Bold" Grid.Column="1" VerticalOptions="Center"/>
+                    <Label Text="Количество" FontAttributes="Bold" Grid.Column="2" VerticalOptions="Center"/>
+                    <Label Text="Удалить" FontAttributes="Bold" Grid.Column="3" VerticalOptions="Center" HorizontalOptions="End"/>
+                </Grid>
+
+                <CollectionView ItemsSource="{Binding CartProducts}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="{Binding ProductName}" Grid.Column="0" VerticalOptions="Center"/>
+                                <Label Text="{Binding SupplierName}" Grid.Column="1" VerticalOptions="Center"/>
+                                <Label Text="{Binding Quantity}" Grid.Column="2" VerticalOptions="Center"/>
+                                <Button Text="🗑️" Grid.Column="3" BackgroundColor="DarkRed" TextColor="White"
+                                        Clicked="OnRemoveFromCartClicked" CommandParameter="{Binding .}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Grid ColumnSpacing="10" VerticalOptions="End">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Text="Оформить заказ" Grid.Column="0" HorizontalOptions="Fill" Padding="10" Clicked="OnPlaceOrderClicked"/>
+                    <Button Text="Очистить" Grid.Column="1" BackgroundColor="DarkRed" TextColor="White"
+                            HorizontalOptions="Fill" Padding="10" Clicked="OnClearCartClicked"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

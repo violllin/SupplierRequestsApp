@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Supplier.EditSupplierComponent"
+             Title="Новый поставщик">
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Название" FontAttributes="Bold" />
+            <Entry x:Name="NameEntry" Placeholder="Введите название" />
+            <Label Text="Адрес" FontAttributes="Bold" />
+            <Entry x:Name="AddressEntry" Placeholder="Введите адрес" />
+            <Label Text="Телефон" FontAttributes="Bold" />
+            <Entry x:Name="PhoneEntry" Placeholder="Введите телефон" Keyboard="Telephone" />
+            <Button Text="Сохранить" Clicked="OnSaveClicked" />
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

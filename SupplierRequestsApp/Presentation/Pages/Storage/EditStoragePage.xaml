@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Storage.EditStoragePage"
+             Title="Редактирование склада">
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="ID склада" FontAttributes="Bold"/>
+            <Entry x:Name="StorageIdEntry" Placeholder="ID" IsEnabled="False"/>
+
+            <Label Text="Максимальная вместимость полки" FontAttributes="Bold"/>
+            <Entry x:Name="ShelfCapacityEntry" Placeholder="Введите вместимость" Keyboard="Numeric"/>
+            <Button x:Name="AddShelfButton" Text="Добавить полку" Clicked="OnAddShelfClicked"/>
+
+            <Label Text="Список полок:" FontAttributes="Bold"/>
+            
+            <Grid Padding="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="40" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Text="№" FontAttributes="Bold"/>
+                <Label Grid.Column="1" Text="ID Полки" FontAttributes="Bold"/>
+                <Label Grid.Column="2" Text="Вместимость" FontAttributes="Bold"/>
+                <Label Grid.Column="3" Text="Свободно ячеек" FontAttributes="Bold"/>
+                <Label Grid.Column="4" Text="Действия"/>
+            </Grid>
+
+            <CollectionView x:Name="ShelvesCollectionView">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Index}" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="{Binding Shelf.Id}" VerticalOptions="Center"/>
+                            <Label Grid.Column="2" Text="{Binding Shelf.MaxCapacity}" VerticalOptions="Center"/>
+                            <Label Grid.Column="3" Text="{Binding Shelf.FreeSlots}" VerticalOptions="Center"/>
+                            
+                            <StackLayout Grid.Column="4" Orientation="Horizontal" Spacing="5">
+                                <Button  Text="✏️"
+                                        Clicked="OnEditShelfClicked"
+                                        CommandParameter="{Binding Shelf}"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"/>
+                            
+                                <Button Text="🗑" 
+                                        BackgroundColor="DarkRed" 
+                                        TextColor="White" 
+                                        Clicked="OnRemoveShelfClicked" 
+                                        CommandParameter="{Binding Shelf}"
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center"/>
+                            </StackLayout>
+                            
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Сохранить" Clicked="OnSaveClicked"/>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

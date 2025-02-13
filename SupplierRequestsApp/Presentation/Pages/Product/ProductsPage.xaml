@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Product.ProductsPage"
+             Title="Товары">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1" Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="ID товара" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Center"/>
+                <Label Text="Название" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Center"/>
+                <Label Text="Количество поставщиков" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Center"/>
+                <Label Text="ID склада" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Center"/>
+                <Label Text="Действия" FontAttributes="Bold" Grid.Column="4" HorizontalOptions="End"/>
+            </Grid>
+
+            <CollectionView x:Name="ProductsCollectionView"
+                            ItemsSource="{Binding Products}"
+                            Grid.Row="2">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Id}" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="{Binding Name}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="{Binding SuppliersId.Count}" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="{Binding ShelfId}" Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <StackLayout Grid.Column="4" Spacing="5" VerticalOptions="Center" HorizontalOptions="End" Orientation="Horizontal">
+                                    <Button Text="✏️" Clicked="OnEditClicked" CommandParameter="{Binding}" />
+                                    <Button Text="🗑" BackgroundColor="DarkRed" Clicked="OnRemoveClicked" CommandParameter="{Binding}" />
+                                </StackLayout>
+                            </Grid>
+                            <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="0,5,0,5"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Добавить товар"
+                    Clicked="OnAddNewProductClicked"
+                    VerticalOptions="End"
+                    Grid.Row="3" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

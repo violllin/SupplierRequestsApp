@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Supplier.SuppliersPage"
+             Title="Поставщики">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1" Padding="10" BackgroundColor="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="ID поставщика" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <Label Text="Название" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <Label Text="Адрес" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <Label Text="Телефон" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <Label Text="Действия" FontAttributes="Bold" Grid.Column="4" HorizontalOptions="End" VerticalOptions="Center"/>
+            </Grid>
+
+            <CollectionView x:Name="SuppliersCollectionView"
+                            ItemsSource="{Binding Suppliers}"
+                            Grid.Row="2">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Id}" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="{Binding Name}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="{Binding Address}" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="{Binding Phone}" Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <StackLayout Grid.Column="4" Spacing="5" VerticalOptions="Center" HorizontalOptions="End" Orientation="Horizontal">
+                                    <Button Text="✏️" Clicked="OnEditClicked" CommandParameter="{Binding}" />
+                                    <Button Text="🗑" BackgroundColor="DarkRed" TextColor="White" Clicked="OnRemoveClicked" CommandParameter="{Binding}" />
+                                </StackLayout>
+                            </Grid>
+                            <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="0,5,0,5"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Добавить поставщика"
+                    Clicked="OnAddNewSupplierClicked"
+                    VerticalOptions="End"
+                    Grid.Row="3" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
