@@ -134,4 +134,13 @@ public class StockTrackingPageController
         _cartService.PlaceOrder();
         UpdateTables();
     }
+    
+    public List<Product> LoadNonDeficitProducts()
+    {
+        var allProducts = _productService.LoadEntities();
+        var deficitProductIds = DeficitProducts.Select(dp => dp.Product.Id).ToHashSet();
+        var cartProductIds = CartProducts.Select(cp => cp.Product.Id).ToHashSet();
+        return allProducts.Where(product => !deficitProductIds.Contains(product.Id) && !cartProductIds.Contains(product.Id)).ToList();
+    }
+    
 }

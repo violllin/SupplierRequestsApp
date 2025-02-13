@@ -90,5 +90,33 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
                 await DisplayAlert("Не удалось оформить заказ.", exception.Message, "OK");
             }
         }
+        
+        private async void OnAddNonDeficitProductToCart_Clicked(object? sender, EventArgs e)
+        {
+            var nonDeficitProducts = _controller.LoadNonDeficitProducts();
+            var productNames = nonDeficitProducts.Select(p => p.Name).ToArray();
+            var selectedProductName = await DisplayActionSheet("Выберите товар", "Отмена", null, productNames);
+            var selectedProduct = nonDeficitProducts.FirstOrDefault(p => p.Name == selectedProductName);
+
+            if (selectedProduct == null) return;
+
+            var suppliers = _controller.LoadSuppliers(selectedProduct.SuppliersId);
+            var supplierNames = suppliers.Select(s => s.Name).ToArray();
+            var selectedSupplierName = await DisplayActionSheet("Выберите поставщика", "Отмена", null, supplierNames);
+            var selectedSupplier = suppliers.FirstOrDefault(s => s.Name == selectedSupplierName);
+
+            if (selectedSupplier == null) return;
+
+            var result = await DisplayPromptAsync("Заказ товара", $"Введите количество для {selectedProduct.Name}:", "OK", "Отмена", "Количество", keyboard: Keyboard.Numeric);
+
+            if (int.TryParse(result, out int quantity) && quantity > 0)
+            {
+                _controller.AddProductToCart(selectedProduct, quantity, selectedSupplier.Id, selectedSupplierName);
+            }
+            else
+            {
+                await DisplayAlert("Ошибка", "Введите корректное количество!", "ОК");
+            }
+        }
     }
 }

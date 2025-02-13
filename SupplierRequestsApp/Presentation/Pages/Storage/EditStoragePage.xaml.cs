@@ -115,9 +115,9 @@ public partial class EditStoragePage : ContentPage
                 }
                 catch (Exception exception)
                 {
-                    Debug.WriteLine(exception);
+                    Debug.WriteLine($"Error while edit shelf. Caused by: {exception.Message}\n{exception.StackTrace}");
+                    await DisplayAlert("Не удалось изменить полку", exception.Message, "OK");
                 }
-                
             }
             else
             {
