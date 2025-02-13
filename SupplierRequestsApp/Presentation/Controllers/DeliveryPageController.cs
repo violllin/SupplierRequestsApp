@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using SupplierRequestsApp.Data.Service;
 using SupplierRequestsApp.Domain.Models;
 using SupplierRequestsApp.Domain.Service;
@@ -38,10 +39,17 @@ public class DeliveryPageController
         List<OrderProduct> list = [];
         foreach (var item in order.OrderProducts)
         {
-            var product = _productService.LoadEntity(item.ProductId.ToString());
-            if (product != null)
-                list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName, item.ProductId,
-                    item.Quantity, product.Name));
+            try
+            {
+                var product = _productService.LoadEntity(item.ProductId.ToString());
+                if (product != null)
+                    list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName, item.ProductId,
+                        item.Quantity, product.Name));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Product not found. Caused by: {e.Message}\n{e.StackTrace}");
+            }
         }
         return list;
     }
