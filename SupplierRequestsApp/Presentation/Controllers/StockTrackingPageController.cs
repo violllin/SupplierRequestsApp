@@ -18,14 +18,7 @@ public class StockTrackingPageController
 
     public StockTrackingPageController()
     {
-        try
-        {
-            UpdateTables();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e.Message + "\n" + e.StackTrace);
-        }
+        UpdateTables();
     }
 
     private void UpdateTables()
@@ -77,7 +70,7 @@ public class StockTrackingPageController
         {
             foreach (var slot in shelf.Slots.Where(s => s.Value.HasValue))
             {
-                var product = _productService.LoadEntity(typeof(Product), slot.Value.ToString()!);
+                var product = _productService.LoadEntity(slot.Value.ToString()!);
                 if (product == null) continue;
 
                 var existingItem = stockItems.FirstOrDefault(item => item.Product == product);
@@ -111,8 +104,7 @@ public class StockTrackingPageController
     public List<Supplier?> LoadSuppliers(List<Guid> supplierIds)
     {
         return supplierIds.Select(id =>
-                _supplierService.LoadEntity(typeof(Supplier),
-                    id.ToString()))
+                _supplierService.LoadEntity(id.ToString()))
             .Where(supplier => supplier != null)
             .ToList() ?? throw new SupplierNotFoundException("Не найдено ни одного поставщика для данного товара");
     }

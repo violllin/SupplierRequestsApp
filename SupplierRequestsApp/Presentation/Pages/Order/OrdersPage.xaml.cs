@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using SupplierRequestsApp.Domain.Models;
 
 namespace SupplierRequestsApp.Presentation.Pages.Order
 {
@@ -24,7 +25,15 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
 
         private async void OnDeliveryClicked(object sender, EventArgs e)
         {
-            // await Navigation.PushAsync(new DeliveryPage());
+            try
+            {
+                await Navigation.PushAsync(new DeliveryPage());
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error while open Delivery page. Caused by: {exception.Message}\n{exception.StackTrace}");
+                await DisplayAlert("Не удалось открыть страницу доставок.", exception.Message, "OK");
+            }
         }
     }
 }

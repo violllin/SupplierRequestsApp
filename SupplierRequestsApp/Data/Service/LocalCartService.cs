@@ -22,7 +22,7 @@ public class LocalCartService : ICartService
     {
         try
         {
-            return _orderService.LoadEntities(typeof(Order))
+            return _orderService.LoadEntities()
                 .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
         }
         catch (Exception e)
@@ -37,7 +37,7 @@ public class LocalCartService : ICartService
     {
         try
         {
-            return _orderService.LoadEntities(typeof(Order)).ToList();
+            return _orderService.LoadEntities().ToList();
         }
         catch (Exception e)
         {

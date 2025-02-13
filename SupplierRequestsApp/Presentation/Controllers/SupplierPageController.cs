@@ -12,14 +12,7 @@ public class SuppliersPageController
 
     public SuppliersPageController()
     {
-        try
-        {
-            UpdateTable();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-        }
+        UpdateTable();
     }
 
     public ObservableCollection<Supplier> Suppliers { get; set; } = [];

@@ -15,14 +15,7 @@ public class OrdersPageController
 
     public OrdersPageController()
     {
-        try
-        {
-            UpdateTable();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"Error while updating table. Caused by: {e.Message}");
-        }
+        UpdateTable();
     }
 
     public ObservableCollection<Order> Orders { get; set; } = new();

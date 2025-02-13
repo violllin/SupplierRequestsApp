@@ -8,20 +8,20 @@ public class LocalStorageService<T> : IStorage<T> where T : class
 {
     private readonly JsonObjectSerializer _serializer = new();
 
-    public IEnumerable<T> LoadEntities(Type type)
+    public IEnumerable<T> LoadEntities()
     {
         List<T> entities = [];
-        var localPathDirectory = LocalPathBuilder.BuildFolderPath(type);
+        var localPathDirectory = LocalPathBuilder.BuildFolderPath(typeof(T));
         if (!Directory.Exists(localPathDirectory.Directory))
-            throw new DirectoryNotFoundException($"Не найдена директория: {localPathDirectory.Directory}");
+            return entities;
         var files = Directory.GetFiles(localPathDirectory.Directory, "*.json");
         entities.AddRange(files.Select(File.ReadAllText).Select(jsonString => _serializer.Deserialize<T>(jsonString)).OfType<T>());
         return entities;
     }
 
-    public T? LoadEntity(Type type, string fileName)
+    public T? LoadEntity(string fileName)
     {
-        var localPath = LocalPathBuilder.BuildPath(type, fileName);
+        var localPath = LocalPathBuilder.BuildPath(typeof(T), fileName);
         if (!File.Exists(localPath.AbsolutePath)) throw new FileNotFoundException($"Файл {localPath.Filename} не найден.");
         var jsonString = File.ReadAllText(localPath.AbsolutePath);
         return _serializer.Deserialize<T>(jsonString);

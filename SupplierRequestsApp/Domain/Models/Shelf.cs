@@ -50,6 +50,8 @@ public class Shelf
     }
 
     public bool CanStore() => FreeSlots > 0;
+    
+    public bool CanStore(int size) => FreeSlots >= size;
 
     public void StoreProduct(Guid productId)
     {

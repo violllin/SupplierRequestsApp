@@ -18,31 +18,24 @@ public class ProductsPageController
 
     public ProductsPageController()
     {
-        try
-        {
-            UpdateTable();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-        }
+        UpdateTable();
     }
     
     public List<Product> LoadProducts()
     {
-        return _productService.LoadEntities(typeof(Domain.Models.Product))
+        return _productService.LoadEntities()
             .ToList();
     }
     
     public List<Storage> LoadStorages()
     {
-        return _storageService.LoadEntities(typeof(Domain.Models.Storage))
+        return _storageService.LoadEntities()
             .ToList();
     }
 
     public List<Supplier> LoadSuppliers()
     {
-        return _supplierService.LoadEntities(typeof(Domain.Models.Supplier))
+        return _supplierService.LoadEntities()
             .ToList();
     }
     
@@ -51,7 +44,7 @@ public class ProductsPageController
         List<Shelf> shelves = [];
         foreach (var storage in storages)
         {
-            shelves.AddRange(storage.Shelves.Select(shelfId => _shelfService.LoadEntity(typeof(Shelf), shelfId.ToString())).OfType<Shelf>().Where(shelf => shelf.CanStore()));
+            shelves.AddRange(storage.Shelves.Select(shelfId => _shelfService.LoadEntity(shelfId.ToString())).OfType<Shelf>().Where(shelf => shelf.CanStore()));
         }
 
         return shelves;
@@ -69,11 +62,11 @@ public class ProductsPageController
 
     public void AddItem(Product product)
     {
-        var shelf = _shelfService.LoadEntity(typeof(Shelf), product.ShelfId.ToString());
+        var shelf = _shelfService.LoadEntity(product.ShelfId.ToString());
         if (shelf == null) throw new ShelfNotFoundException("Полка с таким ID не найдена.");
         shelf.StoreProduct(product.Id);
         _shelfService.UpdateEntity(shelf);
-        foreach (var loadedSupplier in product.SuppliersId.Select(supplier => _supplierService.LoadEntity(typeof(Supplier), supplier.ToString())))
+        foreach (var loadedSupplier in product.SuppliersId.Select(supplier => _supplierService.LoadEntity(supplier.ToString())))
         {
             if (loadedSupplier == null) throw new SupplierNotFoundException("Поставщик с таким ID не найден.");
             loadedSupplier.Products.Add(product.Id);
@@ -86,7 +79,7 @@ public class ProductsPageController
 
     public void DropItem(Product product)
     {
-        foreach (var supplier in product.SuppliersId.Select(supplierId => _supplierService.LoadEntity(typeof(Supplier), supplierId.ToString())))
+        foreach (var supplier in product.SuppliersId.Select(supplierId => _supplierService.LoadEntity(supplierId.ToString())))
         {
             if (supplier == null) throw new SupplierNotFoundException("Поставщик с таким ID не найден.");
             supplier.Products.Remove(product.Id);
@@ -95,7 +88,7 @@ public class ProductsPageController
         
         try
         {
-            var shelf = _shelfService.LoadEntity(typeof(Shelf), product.ShelfId.ToString());
+            var shelf = _shelfService.LoadEntity(product.ShelfId.ToString());
             if (shelf == null) throw new ShelfNotFoundException("Полка с таким ID не найдена.");
             shelf.RemoveProduct(product.Id);
             _shelfService.UpdateEntity(shelf);
@@ -111,7 +104,7 @@ public class ProductsPageController
 
     public void EditItem(Product product)
     {
-        var oldShelf = _shelfService.LoadEntity(typeof(Shelf), product.PreviosShelfId.ToString());
+        var oldShelf = _shelfService.LoadEntity(product.PreviosShelfId.ToString());
         try
         {
             oldShelf?.RemoveProduct(product.Id);
@@ -121,17 +114,17 @@ public class ProductsPageController
         {
             Debug.WriteLine($"Error while removing product from shelf: {e.Message}");
         }
-        var newShelf =_shelfService.LoadEntity(typeof(Shelf), product.ShelfId.ToString());
+        var newShelf =_shelfService.LoadEntity(product.ShelfId.ToString());
         if (newShelf == null) throw new ShelfNotFoundException("Полка с таким ID не найдена.");
         newShelf.StoreProduct(product.Id);
         _shelfService.UpdateEntity(newShelf);
-        foreach (var supplier in product.PreviosSuppliersId.Select(prevSupplier => _supplierService.LoadEntity(typeof(Supplier), prevSupplier.ToString())))
+        foreach (var supplier in product.PreviosSuppliersId.Select(prevSupplier => _supplierService.LoadEntity(prevSupplier.ToString())))
         {
             supplier?.Products.Remove(product.Id);
             if (supplier != null) _supplierService.UpdateEntity(supplier);
         }
 
-        foreach (var supplier in product.SuppliersId.Select(newSupplier => _supplierService.LoadEntity(typeof(Supplier), newSupplier.ToString())))
+        foreach (var supplier in product.SuppliersId.Select(newSupplier => _supplierService.LoadEntity(newSupplier.ToString())))
         {
             if (supplier == null) throw new SupplierNotFoundException("Поставщик с таким ID не найден.");
             supplier.Products.Add(product.Id);

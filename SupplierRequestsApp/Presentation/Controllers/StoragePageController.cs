@@ -13,14 +13,7 @@ public class StoragePageController
 
     public StoragePageController()
     {
-        try
-        {
-            UpdateTable();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"Error while updating table. Caused by: {e.Message}");
-        }
+        UpdateTable();
     }
 
     public ObservableCollection<Storage> Storages { get; set; } = [];
@@ -44,7 +37,7 @@ public class StoragePageController
 
     public void DropItem(Storage storage)
     {
-        foreach (var loadedShelf in storage.Shelves.Select(shelf => _shelfService.LoadEntity(typeof(Shelf), shelf.ToString())).OfType<Shelf>())
+        foreach (var loadedShelf in storage.Shelves.Select(shelf => _shelfService.LoadEntity(shelf.ToString())).OfType<Shelf>())
         {
             _shelfService.DropEntity(loadedShelf);
         }
@@ -67,7 +60,7 @@ public class StoragePageController
     {
         try
         {
-            return _shelfService.LoadEntities(typeof(Shelf)).Where(shelf => shelf.StorageId == storageId).ToList();
+            return _shelfService.LoadEntities().Where(shelf => shelf.StorageId == storageId).ToList();
         }
         catch (DirectoryNotFoundException e)
         {

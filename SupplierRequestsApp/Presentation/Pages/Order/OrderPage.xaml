@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SupplierRequestsApp.Presentation.Pages.Order.OrderPage"
+             Title="Заказ">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10">
+
+            <Label Text="Идентификатор заказа:" FontSize="Medium" />
+            <Entry x:Name="OrderIdEntry" IsReadOnly="True" />
+
+            <Label Text="Дата создания:" FontSize="Medium" />
+            <Entry x:Name="DateCreatedEntry" IsReadOnly="True" />
+
+            <Label Text="Идентификатор поставщика:" FontSize="Medium" />
+            <Entry x:Name="SupplierIdEntry" IsReadOnly="True" />
+
+            <Label Text="Статус доставки:" FontSize="Medium" />
+            <Picker x:Name="DeliveryStatusPicker" />
+
+            <Label Text="Статус оплаты:" FontSize="Medium" />
+            <Picker x:Name="PayStatusPicker" />
+
+            <Label Text="Продукты в заказе:" FontSize="Medium" />
+            <CollectionView x:Name="OrderProductsList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding}" FontSize="Small" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button x:Name="PayButton" Text="Оплатить" Clicked="PayButton_Clicked"/>
+            <Button x:Name="ReceiveButton" Text="Получить" Clicked="ReceiveButton_Clicked"/>
+            <Button x:Name="RefundButton" Text="Вернуть" Clicked="RefundButton_Clicked"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

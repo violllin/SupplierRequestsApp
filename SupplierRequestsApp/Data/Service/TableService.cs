@@ -18,7 +18,7 @@ public class TableService<T> : ITableService<T> where T: class
     {
         try
         {
-            Data = _storageService.LoadEntities(typeof(T)).ToList();
+            Data = _storageService.LoadEntities().ToList();
         }
         catch (DirectoryNotFoundException directoryNotFoundException)
         {
