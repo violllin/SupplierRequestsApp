@@ -13,10 +13,10 @@ public class Shelf
 
     public Shelf(Guid id, int maxCapacity, Guid storageId, Dictionary<int, Guid?>? slots = null)
     {
-        _id = id;
-        _maxCapacity = Validator.RequireGreaterThan(maxCapacity, 0);
-        _slots = slots ?? new Dictionary<int, Guid?>();
-        _storageId = storageId;
+        Id = id;
+        Slots = slots ?? new Dictionary<int, Guid?>();
+        MaxCapacity = Validator.RequireGreaterThan(maxCapacity, 0);
+        StorageId = storageId;
         FillSlots();
     }
 
@@ -27,7 +27,7 @@ public class Shelf
             _slots[i] = null;
         }
     }
-    
+
     private void CutSlots()
     {
         for (var i = _slots.Count - 1; i >= _maxCapacity; i--)
@@ -51,7 +51,7 @@ public class Shelf
 
         return Task.CompletedTask;
     }
-    
+
     public Guid Id
     {
         get => _id;
@@ -69,7 +69,11 @@ public class Shelf
         }
     }
 
-    public Dictionary<int, Guid?> Slots => _slots;
+    public Dictionary<int, Guid?> Slots
+    {
+        get => _slots;
+        set => _slots = value ?? new Dictionary<int, Guid?>();
+    }
 
     public int FreeSlots => _slots.Count(slot => slot.Value == null);
 
@@ -80,7 +84,7 @@ public class Shelf
     }
 
     public bool CanStore() => FreeSlots > 0;
-    
+
     public bool CanStore(int size) => FreeSlots >= size;
 
     public void StoreProduct(Guid productId)

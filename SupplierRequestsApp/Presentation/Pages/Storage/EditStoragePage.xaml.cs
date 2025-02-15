@@ -45,16 +45,24 @@ public partial class EditStoragePage : ContentPage
             await DisplayAlert("Внимание", "Введите корректную вместимость", "ОК");
             return;
         }
-        
-        await Loading.RunWithLoading(Navigation, () =>
+
+        try
         {
-            var newShelf = new Shelf(Guid.NewGuid(), maxCapacity, _storage.Id);
-            _controller.AddShelf(newShelf);
-            _storage.Shelves.Add(newShelf.Id);
-            UpdateShelfDisplayList();
-            ShelfCapacityEntry.Text = string.Empty;
-            return Task.CompletedTask;
-        });
+            await Loading.RunWithLoading(Navigation, () =>
+            {
+                var newShelf = new Shelf(Guid.NewGuid(), maxCapacity, _storage.Id);
+                _controller.AddShelf(newShelf);
+                _storage.Shelves.Add(newShelf.Id);
+                UpdateShelfDisplayList();
+                ShelfCapacityEntry.Text = string.Empty;
+                return Task.CompletedTask;
+            });
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Error while create new shelf. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Не удалось создать полку.", exception.Message, "OK");
+        }
     }
 
 
