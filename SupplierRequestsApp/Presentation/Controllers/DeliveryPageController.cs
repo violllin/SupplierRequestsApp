@@ -10,6 +10,7 @@ public class DeliveryPageController
 {
     private readonly IDeliveryService _deliveryService = new LocalDeliveryService();
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
+    private readonly IStorage<OrderItem> _orderItemService = new LocalStorageService<OrderItem>();
     private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
     public ObservableCollection<Order> Orders { get; set; } = [];
 
@@ -84,6 +85,16 @@ public class DeliveryPageController
     public void ReceiveOrder(Order order)
     {
         _deliveryService.ReceiveOrder(order);
+        ForceUpdateTable(false);
+    }
+    
+    public void DropOrder(Order order)
+    {
+        foreach (var item in order.OrderProducts)
+        {
+            _orderItemService.DropEntity(item);
+        }
+        _orderService.DropEntity(order);
         ForceUpdateTable(false);
     }
 }
