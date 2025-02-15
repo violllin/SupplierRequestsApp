@@ -12,11 +12,11 @@ public class Supplier
 
     public Supplier(Guid id, string name, string address, string phone, List<Guid> products)
     {
-        _id = id;
-        _name = name;
-        _address = address;
-        _phone = phone;
-        _products = products;
+        Id = id;
+        Name = name;
+        Address = address;
+        Phone = phone;
+        Products = products;
     }
 
     public Guid Id

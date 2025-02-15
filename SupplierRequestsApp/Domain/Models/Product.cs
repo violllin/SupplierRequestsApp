@@ -13,12 +13,12 @@ public class Product
 
     public Product(Guid id, string name, List<Guid> suppliersId, Guid shelfId, Guid previosShelfId, List<Guid> previosSuppliersId)
     {
-        _id = id;
-        _name = name;
-        _suppliersId = suppliersId;
-        _shelfId = shelfId;
-        _previosShelfId = previosShelfId;
-        _previosSuppliersId = previosSuppliersId;
+        Id = id;
+        Name = name;
+        SuppliersId = suppliersId;
+        ShelfId = shelfId;
+        PreviosShelfId = previosShelfId;
+        PreviosSuppliersId = previosSuppliersId;
     }
 
     public Guid Id

@@ -95,27 +95,55 @@ public class LocalCartService : ICartService
         _orderItemService.DropEntity(orderItem);
     }
 
-    public void DropCart()
+    public void DropCart(List<OrderItem>? newCartItems = null)
     {
         if (_order == null) throw new OrderNotFoundException("Корзина не найдена.");
-        foreach (var orderItem in _order.OrderProducts)
+
+        if (newCartItems == null)
         {
-            _orderItemService.DropEntity(orderItem);
+            foreach (var item in _order.OrderProducts.ToList())
+            {
+                _order.OrderProducts.Remove(item);
+                _orderItemService.DropEntity(item);
+            }
         }
-        _order.ClearOrderProducts();
-        _orderService.SaveEntity(_order);
-        _order = null;
+        else
+        {
+            foreach (var orderItem in newCartItems)
+            {
+                var itemToRemove = _order.OrderProducts.FirstOrDefault(op => op.Id == orderItem.Id);
+                if (itemToRemove != null)
+                {
+                    _order.OrderProducts.Remove(itemToRemove);
+                    _orderItemService.DropEntity(itemToRemove);
+                }
+            } 
+        }
+        _orderService.UpdateEntity(_order);
     }
 
     public List<OrderProduct> GetCart()
     {
-        List<OrderProduct> list = [];
+        List<OrderProduct> list = new();
         if (_order == null) return list;
+
+        var orderedProductIds = _orders?
+            .Where(order => order.DeliveryStatus != DeliveryStatus.NotCreated)
+            .SelectMany(order => order.OrderProducts)
+            .Select(item => item.ProductId)
+            .ToHashSet() ?? new HashSet<Guid>();
+
         foreach (var item in _order.OrderProducts)
         {
-            var product = _productService.LoadEntity(item.ProductId.ToString());
-            if (product != null) list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName,
-                item.ProductId, item.Quantity, product.Name));
+            if (!orderedProductIds.Contains(item.ProductId))
+            {
+                var product = _productService.LoadEntity(item.ProductId.ToString());
+                if (product != null)
+                {
+                    list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName,
+                        item.ProductId, item.Quantity, product.Name));
+                }
+            }
         }
         return list;
     }

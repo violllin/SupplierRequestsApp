@@ -93,7 +93,8 @@ public class StockTrackingPageController
         var allProducts = _productService.LoadEntities();
         foreach (var product in allProducts)
         {
-            if (stockItems.Any(item => item.Product.Id == product.Id) || undeliveredOrderProducts.Contains(product.Id)) continue;
+            if (stockItems.Any(item => item.Product.Id == product.Id) ||
+                undeliveredOrderProducts.Contains(product.Id)) continue;
 
             var productCount = shelves.Sum(shelf => shelf.Slots.Count(slot => slot.Value == product.Id));
             if (productCount == 0) stockItems.Add(new StockItem(product, productCount));
@@ -126,7 +127,12 @@ public class StockTrackingPageController
 
     public void DropCart()
     {
-        _cartService.DropCart();
+        var newCartItems = CartProducts.Select(cp => new OrderItem(
+            id: cp.Id, orderId: cp.OrderId, supplierId: cp.SupplierId, supplierName: cp.SupplierName,
+            productId: cp.ProductId, quantity: cp.Quantity)
+        ).ToList();
+
+        _cartService.DropCart(newCartItems);
         UpdateTables();
     }
 
@@ -135,13 +141,13 @@ public class StockTrackingPageController
         _cartService.PlaceOrder();
         UpdateTables();
     }
-    
+
     public List<Product> LoadNonDeficitProducts()
     {
         var allProducts = _productService.LoadEntities();
         var deficitProductIds = DeficitProducts.Select(dp => dp.Product.Id).ToHashSet();
         var cartProductIds = CartProducts.Select(cp => cp.ProductId).ToHashSet();
-        return allProducts.Where(product => !deficitProductIds.Contains(product.Id) && !cartProductIds.Contains(product.Id)).ToList();
+        return allProducts
+            .Where(product => !deficitProductIds.Contains(product.Id) && !cartProductIds.Contains(product.Id)).ToList();
     }
-    
 }

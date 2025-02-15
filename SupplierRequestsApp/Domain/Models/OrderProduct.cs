@@ -6,7 +6,7 @@ public class OrderProduct : OrderItem
 
     public OrderProduct(Guid id, Guid orderId, Guid supplierId, string supplierName, Guid productId, int quantity, string productName) : base(id, orderId, supplierId, supplierName, productId, quantity)
     {
-        _productName = productName;
+        ProductName = productName;
     }
 
     public string ProductName
