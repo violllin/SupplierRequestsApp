@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Windows.Devices.PointOfService;
 using SupplierRequestsApp.Data;
 using SupplierRequestsApp.Util;
 
@@ -11,12 +12,12 @@ public class Shelf
     private Dictionary<int, Guid?> _slots;
     private Guid _storageId;
 
-    public Shelf(Guid id, int maxCapacity, Guid storageId, Dictionary<int, Guid?>? slots = null)
+    public Shelf(Guid id, int maxCapacity, Guid storageId)
     {
-        _id = id;
-        _maxCapacity = Validator.RequireGreaterThan(maxCapacity, 0);
-        _slots = slots ?? new Dictionary<int, Guid?>();
-        _storageId = storageId;
+        Id= id;
+        MaxCapacity = Validator.RequireGreaterThan(maxCapacity, 0);
+        Slots = new Dictionary<int, Guid?>();
+        StorageId = storageId;
         FillSlots();
     }
 
@@ -69,7 +70,11 @@ public class Shelf
         }
     }
 
-    public Dictionary<int, Guid?> Slots => _slots;
+    public Dictionary<int, Guid?> Slots
+    {
+        get => _slots;
+        set => _slots = value;
+    }
 
     public int FreeSlots => _slots.Count(slot => slot.Value == null);
 
@@ -85,14 +90,9 @@ public class Shelf
 
     public void StoreProduct(Guid productId)
     {
+        var slot = _slots.FirstOrDefault(slot => slot.Value == null);
         if (!CanStore()) throw new NoFreeSpaceForItemException("На полке нет свободных ячеек.");
-
-        foreach (var slot in _slots.Where(slot => slot.Value == null))
-        {
-            _slots[slot.Key] = productId;
-            return;
-        }
-
+        _slots[slot.Key] = productId;
     }
 
     public void RemoveProduct(Guid productId)

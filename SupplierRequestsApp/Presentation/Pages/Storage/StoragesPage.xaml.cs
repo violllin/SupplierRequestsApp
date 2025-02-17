@@ -19,7 +19,7 @@ public partial class StoragesPage : ContentPage
     {
         try
         {
-            _controller.AddItem(new Domain.Models.Storage(Guid.NewGuid(), []));
+            _controller.AddItem(new Domain.Models.Storage(Guid.NewGuid()));
         }
         catch (Exception ex)
         {
@@ -34,7 +34,7 @@ public partial class StoragesPage : ContentPage
         var storage = (Domain.Models.Storage?) button.CommandParameter;
         try
         {
-            await Navigation.PushAsync(new EditStoragePage(_controller, storage));
+            await Navigation.PushAsync(new EditStoragePage(_controller, storage!));
         }
         catch (Exception exception)
         {

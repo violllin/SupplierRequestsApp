@@ -5,27 +5,13 @@ namespace SupplierRequestsApp.Presentation.Pages
         public LoadingComponent()
         {
             BackgroundColor = Color.FromArgb("#80000000");
-            Content = new StackLayout
+            Content = new ActivityIndicator
             {
+                IsRunning = true,
+                Color = Colors.White,
+                Scale = 3,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                Spacing = 20,
-                Children =
-                {
-                    new ActivityIndicator
-                    {
-                        IsRunning = true,
-                        Color = Colors.White,
-                        Scale = 3
-                    },
-                    new Label
-                    {
-                        Text = "Загрузка",
-                        TextColor = Colors.White,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        FontSize = 20
-                    }
-                }
+                HorizontalOptions = LayoutOptions.CenterAndExpand
             };
         }
     }

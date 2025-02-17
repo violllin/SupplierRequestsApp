@@ -38,7 +38,7 @@ public class StoragePageController
     {
         foreach (var loadedShelf in storage.Shelves.Select(shelf => _shelfService.LoadEntity(shelf.ToString())).OfType<Shelf>())
         {
-            _shelfService.DropEntity(loadedShelf);
+            DropShelf(loadedShelf);
         }
         Service.DropItem(storage);
         Storages.Remove(storage);

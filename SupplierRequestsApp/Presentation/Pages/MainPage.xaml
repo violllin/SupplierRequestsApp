@@ -8,17 +8,13 @@
         Spacing="20"
         MaximumWidthRequest="750">
         <Button Text="Склады"
-                Clicked="OnStoragesPageClicked" 
-                VerticalOptions="Center"/>
+                Clicked="OnStoragesPageClicked" />
         <Button Text="Поставщики"
-                Clicked="OnSupplierPageClicked" 
-                VerticalOptions="Center"/>
+                Clicked="OnSupplierPageClicked" />
         <Button Text="Продукты"
-                Clicked="OnProductPageClicked" 
-                VerticalOptions="Center"/>
+                Clicked="OnProductPageClicked"/>
         <Button Text="Заказы"
-                Clicked="OnOrdersPageClicked" 
-                VerticalOptions="Center"/>
+                Clicked="OnOrdersPageClicked" />
     </StackLayout>
 
 </ContentPage>

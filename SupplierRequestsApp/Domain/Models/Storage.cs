@@ -7,10 +7,10 @@ public class Storage
     private Guid _id;
     private List<Guid> _shelves;
 
-    public Storage(Guid id, List<Guid>? shelves = null)
+    public Storage(Guid id)
     {
-        _id = id;
-        _shelves = shelves ?? new List<Guid>();
+        Id = id;
+        Shelves = new List<Guid>();
     }
 
     public Guid Id
