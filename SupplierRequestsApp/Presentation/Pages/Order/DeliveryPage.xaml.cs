@@ -34,4 +34,21 @@ public partial class DeliveryPage : ContentPage
         _controller.ForceUpdateTable(_isArchiveShown);
         ShowArchivedOrdersButton.Text = _isArchiveShown ? "Скрыть завершенные заказы" : "Показать завершенные заказы";
     }
+
+    private async void OnDropOrderClicked(object sender, EventArgs e)
+    {
+        if (sender is not Button { BindingContext: Domain.Models.Order order }) return;
+        bool confirm = await DisplayAlert("Подтверждение", "Вы уверены, что хотите удалить этот заказ?", "Да", "Нет");
+        if (!confirm) return;
+
+        try
+        {
+            _controller.DropOrder(order);
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Error while dropping order. Caused by: {exception.Message}\n{exception.StackTrace}");
+            await DisplayAlert("Не удалось удалить заказ.", exception.Message, "OK");
+        }
+    }
 }

@@ -63,7 +63,7 @@
                     <Label Text="Название" FontAttributes="Bold" Grid.Column="0" VerticalOptions="Center"/>
                     <Label Text="Поставщик" FontAttributes="Bold" Grid.Column="1" VerticalOptions="Center"/>
                     <Label Text="Количество" FontAttributes="Bold" Grid.Column="2" VerticalOptions="Center"/>
-                    <Label Text="Удалить" FontAttributes="Bold" Grid.Column="3" VerticalOptions="Center" HorizontalOptions="End"/>
+                    <Label Text="Действия" FontAttributes="Bold" Grid.Column="3" VerticalOptions="Center" HorizontalOptions="End"/>
                 </Grid>
 
                 <CollectionView ItemsSource="{Binding CartProducts}">
