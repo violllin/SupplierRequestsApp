@@ -46,16 +46,18 @@ public class LocalCartService : ICartService
             return null;
         }
     }
-    
+
     private Order CreateDraftOrder(Guid supplierId)
     {
         var loadedOrder = _orderService.LoadEntities()
-            .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.Created || order.DeliveryStatus == DeliveryStatus.NotCreated);
+            .FirstOrDefault(order =>
+                order.DeliveryStatus == DeliveryStatus.Created || order.DeliveryStatus == DeliveryStatus.NotCreated);
         if (loadedOrder != null)
         {
             _order = loadedOrder;
             return _order;
         }
+
         var order = new Order(Guid.NewGuid(), DateTime.Now, supplierId, new List<OrderItem>(),
             DeliveryStatus.NotCreated, PayStatus.NotPaid);
         _orderService.SaveEntity(order);
@@ -90,9 +92,11 @@ public class LocalCartService : ICartService
 
     public void DropItem(OrderItem orderItem)
     {
-        _order?.OrderProducts.Remove(orderItem);
-        _orderService.UpdateEntity(_order!);
+        if (_order == null)
+            throw new OrderNotFoundException("Корзина не найдена.");
+        _order.DropProductFromOrder(orderItem);
         _orderItemService.DropEntity(orderItem);
+        _orderService.UpdateEntity(_order);
     }
 
     public void DropCart(List<OrderItem>? newCartItems = null)
@@ -117,8 +121,9 @@ public class LocalCartService : ICartService
                     _order.OrderProducts.Remove(itemToRemove);
                     _orderItemService.DropEntity(itemToRemove);
                 }
-            } 
+            }
         }
+
         _orderService.UpdateEntity(_order);
     }
 
@@ -145,6 +150,7 @@ public class LocalCartService : ICartService
                 }
             }
         }
+
         return list;
     }
 

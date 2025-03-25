@@ -52,6 +52,7 @@ public class DeliveryPageController
                 Debug.WriteLine($"Product not found. Caused by: {e.Message}\n{e.StackTrace}");
             }
         }
+
         return list;
     }
 
@@ -87,13 +88,14 @@ public class DeliveryPageController
         _deliveryService.ReceiveOrder(order);
         ForceUpdateTable(false);
     }
-    
+
     public void DropOrder(Order order)
     {
         foreach (var item in order.OrderProducts)
         {
             _orderItemService.DropEntity(item);
         }
+
         _orderService.DropEntity(order);
         ForceUpdateTable(false);
     }

@@ -1,4 +1,5 @@
 ﻿using SupplierRequestsApp.Data;
+using SupplierRequestsApp.Util;
 
 namespace SupplierRequestsApp.Domain.Models;
 
@@ -64,7 +65,9 @@ public class Order
     
     public void DropProductFromOrder(OrderItem orderItem)
     {
-        OrderProducts.Remove(orderItem);
+        var item = OrderProducts.Find(item => item.Id == orderItem.Id);
+        if (item == null) throw new OrderItemNotFoundException("Объект не найден.");
+        OrderProducts.Remove(item);
     }
 
     public void ClearOrderProducts()

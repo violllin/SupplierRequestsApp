@@ -81,7 +81,7 @@
                                 <Label Text="{Binding SupplierName}" Grid.Column="1" VerticalOptions="Center"/>
                                 <Label Text="{Binding Quantity}" Grid.Column="2" VerticalOptions="Center"/>
                                 <Button Text="🗑️" Grid.Column="3" BackgroundColor="DarkRed" TextColor="White"
-                                        Clicked="OnRemoveFromCartClicked" CommandParameter="{Binding .}"/>
+                                        Clicked="OnRemoveFromCartClicked" BindingContext="{Binding .}"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

@@ -61,7 +61,7 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
                     return (selectedProduct, quantity, selectedSupplier.Id, selectedSupplierName);
                 }
             }
-            throw new InvalidOperationException("Введите корректное количество!");
+            throw new InvalidOperationException("Введите корректное количество товара!");
         }
         
         private async void OnOrderClicked(object sender, EventArgs e)
@@ -71,6 +71,11 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
             {
                 var (product, quantity, supplierId, supplierName) = await ShowNewOrderFields(true, stockItem);
                 _controller.AddProductToCart(product, quantity, supplierId, supplierName);
+            }
+            catch (InvalidOperationException exception)
+            {
+                Debug.WriteLine($"Cannot add product to cart. Caused by: {exception.Message}\n{exception.StackTrace}");
+                await DisplayAlert("Ошибка при добавление продукта в корзину", exception.Message, "ОК");
             }
             catch (SupplierNotFoundException exception)
             {
@@ -123,8 +128,16 @@ namespace SupplierRequestsApp.Presentation.Pages.Order
         
         private async void OnAddNonDeficitProductToCart_Clicked(object? sender, EventArgs e)
         {
-            var (product, quantity, supplierId, supplierName) = await ShowNewOrderFields();
-            _controller.AddProductToCart(product, quantity, supplierId, supplierName);
+            try
+            {
+                var (product, quantity, supplierId, supplierName) = await ShowNewOrderFields();
+                _controller.AddProductToCart(product, quantity, supplierId, supplierName);
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error while placing order. Caused by: {exception.Message}");
+                await DisplayAlert("Не удалось оформить заказ.", exception.Message, "OK");
+            }
         }
     }
 }
