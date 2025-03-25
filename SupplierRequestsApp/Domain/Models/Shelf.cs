@@ -9,14 +9,13 @@ public class Shelf
 {
     private Guid _id;
     private int _maxCapacity;
-    private Dictionary<int, Guid?> _slots;
+    private Dictionary<int, Guid?> _slots = [];
     private Guid _storageId;
 
     public Shelf(Guid id, int maxCapacity, Guid storageId)
     {
         Id= id;
         MaxCapacity = Validator.RequireGreaterThan(maxCapacity, 0);
-        Slots = new Dictionary<int, Guid?>();
         StorageId = storageId;
         FillSlots();
     }

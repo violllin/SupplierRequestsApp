@@ -6,7 +6,6 @@ namespace SupplierRequestsApp.Data.Service;
 
 public class LocalDeliveryService : IDeliveryService
 {
-
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
     private readonly IStorage<Shelf> _shelfService = new LocalStorageService<Shelf>();
     private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
@@ -22,7 +21,7 @@ public class LocalDeliveryService : IDeliveryService
         order.DeliveryStatus = DeliveryStatus.Delivered;
         UpdateOrder(order);
     }
-    
+
     public void RefundOrder(Order order)
     {
         order.PayStatus = PayStatus.Refund;
@@ -32,6 +31,8 @@ public class LocalDeliveryService : IDeliveryService
 
     public void ReceiveOrder(Order order)
     {
+        if (order.PayStatus != PayStatus.Paid)
+            throw new OrderNotPaidException("Сначала оплатите заказ.");
         DeliverProductsToStorages(order);
         order.DeliveryStatus = DeliveryStatus.Received;
         UpdateOrder(order);
@@ -54,6 +55,7 @@ public class LocalDeliveryService : IDeliveryService
             {
                 shelf.StoreProduct(orderItem.ProductId);
             }
+
             _shelfService.UpdateEntity(shelf);
         }
     }

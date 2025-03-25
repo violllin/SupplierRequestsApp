@@ -10,3 +10,4 @@ public class OrderNotFoundException(string message) : Exception(message);
 public class OrderItemNotFoundException(string message) : Exception(message);
 public class PlacingOrderWithEmptyProductsException(string message) : Exception(message);
 public class ProductNotFoundException(string message) : Exception(message);
+public class OrderNotPaidException(string message) : Exception(message);
