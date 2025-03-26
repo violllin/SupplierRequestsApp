@@ -65,7 +65,7 @@ public class Order
     
     public void DropProductFromOrder(OrderItem orderItem)
     {
-        var item = OrderProducts.Find(item => item.Id == orderItem.Id);
+        var item = OrderProducts.FirstOrDefault(item => item.Id == orderItem.Id);
         if (item == null) throw new OrderItemNotFoundException("Объект не найден.");
         OrderProducts.Remove(item);
     }

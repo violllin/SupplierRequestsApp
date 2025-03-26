@@ -22,7 +22,7 @@ public class LocalStorageService<T> : IStorage<T> where T : class
     public T? LoadEntity(string fileName)
     {
         var localPath = LocalPathBuilder.BuildPath(typeof(T), fileName);
-        if (!File.Exists(localPath.AbsolutePath)) throw new FileNotFoundException($"Файл {localPath.Filename} не найден.");
+        if (!File.Exists(localPath.AbsolutePath)) return null;
         var jsonString = File.ReadAllText(localPath.AbsolutePath);
         return _serializer.Deserialize<T>(jsonString);
     }

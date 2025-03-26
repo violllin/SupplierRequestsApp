@@ -8,7 +8,7 @@ namespace SupplierRequestsApp.Data.Service;
 public class LocalCartService : ICartService
 {
     private Order? _order;
-    private List<Order>? _orders;
+    private List<Order> _orders;
     private readonly IStorage<Order> _orderService = new LocalStorageService<Order>();
     private readonly IStorage<OrderItem> _orderItemService = new LocalStorageService<OrderItem>();
     private readonly IStorage<Product> _productService = new LocalStorageService<Product>();
@@ -21,30 +21,14 @@ public class LocalCartService : ICartService
 
     private Order? LoadOrder()
     {
-        try
-        {
-            return _orderService.LoadEntities()
-                .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"Can't load order. Caused by: {e.Message}");
-            return null;
-        }
+        return _orderService.LoadEntities()
+            .FirstOrDefault(order => order.DeliveryStatus == DeliveryStatus.NotCreated);
     }
 
 
-    private List<Order>? LoadOrders()
+    private List<Order> LoadOrders()
     {
-        try
-        {
-            return _orderService.LoadEntities().ToList();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"Can't load orders. Caused by: {e.Message}");
-            return null;
-        }
+        return _orderService.LoadEntities().ToList();
     }
 
     private Order CreateDraftOrder(Guid supplierId)
@@ -74,20 +58,12 @@ public class LocalCartService : ICartService
 
     public OrderItem AddProduct(Product product, int quantity, Guid supplierId, string supplierName)
     {
-        try
-        {
-            _order ??= CreateDraftOrder(supplierId: supplierId);
-            var newOrderItem = CreateOrderItem(orderId: _order.Id, product: product,
-                supplierId: supplierId, quantity: quantity, supplierName: supplierName);
-            _order.AddProductToOrder(newOrderItem);
-            _orderService.UpdateEntity(_order);
-            return newOrderItem;
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine("Error while adding orderItem to cart: " + e.Message + "\n" + e.StackTrace);
-            throw;
-        }
+        _order ??= CreateDraftOrder(supplierId: supplierId);
+        var newOrderItem = CreateOrderItem(orderId: _order.Id, product: product,
+            supplierId: supplierId, quantity: quantity, supplierName: supplierName);
+        _order.AddProductToOrder(newOrderItem);
+        _orderService.UpdateEntity(_order);
+        return newOrderItem;
     }
 
     public void DropItem(OrderItem orderItem)
@@ -105,9 +81,9 @@ public class LocalCartService : ICartService
 
         if (newCartItems == null)
         {
-            foreach (var item in _order.OrderProducts.ToList())
+            foreach (var item in _order.OrderProducts)
             {
-                _order.OrderProducts.Remove(item);
+                _order.DropProductFromOrder(item);
                 _orderItemService.DropEntity(item);
             }
         }
@@ -115,12 +91,8 @@ public class LocalCartService : ICartService
         {
             foreach (var orderItem in newCartItems)
             {
-                var itemToRemove = _order.OrderProducts.FirstOrDefault(op => op.Id == orderItem.Id);
-                if (itemToRemove != null)
-                {
-                    _order.OrderProducts.Remove(itemToRemove);
-                    _orderItemService.DropEntity(itemToRemove);
-                }
+                _order.DropProductFromOrder(orderItem);
+                _orderItemService.DropEntity(orderItem);
             }
         }
 
@@ -129,25 +101,23 @@ public class LocalCartService : ICartService
 
     public List<OrderProduct> GetCart()
     {
-        List<OrderProduct> list = new();
+        List<OrderProduct> list = [];
         if (_order == null) return list;
 
-        var orderedProductIds = _orders?
+        var orderedProductIds = _orders
             .Where(order => order.DeliveryStatus != DeliveryStatus.NotCreated)
             .SelectMany(order => order.OrderProducts)
             .Select(item => item.ProductId)
-            .ToHashSet() ?? new HashSet<Guid>();
+            .ToHashSet();
 
         foreach (var item in _order.OrderProducts)
         {
-            if (!orderedProductIds.Contains(item.ProductId))
+            if (orderedProductIds.Contains(item.ProductId)) continue;
+            var product = _productService.LoadEntity(item.ProductId.ToString());
+            if (product != null)
             {
-                var product = _productService.LoadEntity(item.ProductId.ToString());
-                if (product != null)
-                {
-                    list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName,
-                        item.ProductId, item.Quantity, product.Name));
-                }
+                list.Add(new OrderProduct(item.Id, item.OrderId, item.SupplierId, item.SupplierName,
+                    item.ProductId, item.Quantity, product.Name));
             }
         }
 
@@ -156,13 +126,12 @@ public class LocalCartService : ICartService
 
     public List<Order> GetOrders()
     {
-        return _orders ?? [];
+        return _orders;
     }
 
     public void PlaceOrder()
     {
-        if (_order == null) throw new OrderNotFoundException("Для начала заполните корзину.");
-        if (_order.OrderProducts.Count == 0)
+        if (_order == null || _order.OrderProducts.Count == 0)
             throw new PlacingOrderWithEmptyProductsException("Для начала заполните козину.");
         _order.DeliveryStatus = DeliveryStatus.Created;
         _orderService.UpdateEntity(_order);
